@@ -1,0 +1,285 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2685.3">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+  </style>
+</head>
+<body>
+<p class="p1">&lt;!DOCTYPE html&gt;</p>
+<p class="p1">&lt;html lang="en"&gt;</p>
+<p class="p1">&lt;head&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;meta charset="UTF-8"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;title&gt;SEO Content Optimizer - Genius Monkey&lt;/title&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;meta name="description" content="Optimize your content for SEO with real-time analysis, keyword tracking, and smart recommendations."&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"&gt;&lt;/script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"&gt;&lt;/script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;script src="https://cdn.tailwindcss.com"&gt;&lt;/script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;style&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/style&gt;</p>
+<p class="p1">&lt;/head&gt;</p>
+<p class="p1">&lt;body&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div id="root"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"&gt;&lt;/script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const { createElement: e, useState, useEffect } = React;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const { Search, CheckCircle, AlertCircle, Lightbulb, TrendingUp, Eye, FileText, Link, Hash, BarChart3, Sparkles } = lucide;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function Icon({ name, className }) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>return e('i', { 'data-lucide': name, className });</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function SEOContentOptimizer() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const [content, setContent] = useState('');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const [targetKeyword, setTargetKeyword] = useState('');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const [analysis, setAnalysis] = useState(null);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const [suggestions, setSuggestions] = useState([]);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const [selected, setSelected] = useState(new Set());</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const [additions, setAdditions] = useState([]);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>useEffect(() =&gt; { lucide.createIcons(); }, [suggestions, additions, analysis]);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>useEffect(() =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (content.length &gt; 10) analyzeContent();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>else { setAnalysis(null); setSuggestions([]); setAdditions([]); }</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}, [content, targetKeyword]);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>const countSyllables = (w) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>w = w.toLowerCase().replace(/[^a-z]/g, '');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (w.length &lt;= 3) return 1;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>w = w.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, '').replace(/^y/, '');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const s = w.match(/[aeiouy]{1,2}/g);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>return s ? s.length : 1;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>const analyzeContent = () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const words = content.trim().split(/\s+/).filter(w =&gt; w.length &gt; 0);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const wc = words.length;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const sents = content.split(/[.!?]+/).filter(s =&gt; s.trim().length &gt; 0);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const sc = sents.length;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const avg = sc &gt; 0 ? wc / sc : 0;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const syl = words.reduce((a, w) =&gt; a + countSyllables(w), 0);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const gl = sc &gt; 0 &amp;&amp; wc &gt; 0 ? 0.39 * (wc / sc) + 11.8 * (syl / wc) - 15.59 : 0;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const kc = targetKeyword ? content.toLowerCase().split(targetKeyword.toLowerCase()).length - 1 : 0;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const kd = wc &gt; 0 &amp;&amp; targetKeyword ? ((kc / wc) * 100).toFixed(2) : 0;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const h1 = (content.match(/^#\s/gm) || []).length;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const h2 = (content.match(/^##\s/gm) || []).length;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const h3 = (content.match(/^###\s/gm) || []).length;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const lc = (content.match(/\[([^\]]+)\]\(([^)]+)\)/g) || []).length;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>let score = 0;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (wc &gt;= 300) score += 20; else if (wc &gt;= 150) score += 10;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (kd &gt; 0.5 &amp;&amp; kd &lt; 3) score += 20; else if (kd &gt; 0) score += 10;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (gl &gt;= 6 &amp;&amp; gl &lt;= 9) score += 20; else if (gl &gt;= 5 &amp;&amp; gl &lt;= 11) score += 10;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (h1 &gt;= 1) score += 10; if (h2 &gt;= 2) score += 10; if (lc &gt;= 2) score += 10; if (avg &lt; 25) score += 10;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>setAnalysis({ score, wc, sc, avg: avg.toFixed(1), gl: Math.max(1, Math.min(12, gl)).toFixed(1), kc, kd, h1, h2, h3, lc });</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>const sugs = [], adds = [];</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (wc &lt; 300) {</p>
+<p class="p1"><span class="Apple-converted-space">          </span>sugs.push({ id: 'wc', t: 'w', title: 'Content Too Short', desc: `${wc} words. Aim for 300-500.`, why: 'Longer content ranks better.' });</p>
+<p class="p1"><span class="Apple-converted-space">          </span>if (targetKeyword) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>adds.push({ id: 'intro', title: 'Add Introduction', desc: 'Context about topic', sugg: `Have you wondered about ${targetKeyword}? Understanding ${targetKeyword} is essential.`, pos: 'beginning' });</p>
+<p class="p1"><span class="Apple-converted-space">            </span>adds.push({ id: 'benefits', title: 'Add Benefits', desc: 'Explain advantages', sugg: `## Benefits of ${targetKeyword}\n\n- Improve strategy\n- Increase results\n- Save resources`, pos: 'middle' });</p>
+<p class="p1"><span class="Apple-converted-space">          </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (targetKeyword &amp;&amp; kd &lt; 0.5) sugs.push({ id: 'kd-low', t: 'w', title: 'Keyword Underused', desc: `"${targetKeyword}" appears ${kc} times (${kd}%). Aim for 1-2%.`, why: 'Keywords help search engines understand topics.' });</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (targetKeyword &amp;&amp; kd &gt; 3) sugs.push({ id: 'stuff', t: 'e', title: 'Keyword Stuffing', desc: `${kd}% is too high.`, why: 'Overuse appears spammy.' });</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (h1 === 0) sugs.push({ id: 'h1', t: 'e', title: 'Missing H1', desc: 'Add main heading with #', why: 'H1 tells search engines your topic.', act: 'h1' });</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (h1 &gt; 1) sugs.push({ id: 'multi-h1', t: 'w', title: 'Multiple H1s', desc: `${h1} H1s. Use one.`, why: 'Multiple H1s confuse search engines.' });</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (h2 &lt; 2) sugs.push({ id: 'h2', t: 'i', title: 'Add Subheadings', desc: 'Include 2-3 H2s', why: 'Improves structure and readability.' });</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (lc &lt; 2) sugs.push({ id: 'links', t: 'i', title: 'Add Links', desc: 'Internal and external links', why: 'Shows well-researched content.' });</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (gl &gt; 10) sugs.push({ id: 'read', t: 'w', title: 'Improve Readability', desc: `Grade ${Math.min(12, gl).toFixed(1)}. Aim 6-9.`, why: 'Easier content keeps visitors engaged.' });</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (avg &gt; 25) {</p>
+<p class="p1"><span class="Apple-converted-space">          </span>sugs.push({ id: 'sent', t: 'i', title: 'Shorten Sentences', desc: `Avg ${avg.toFixed(0)} words. Aim under 20.`, why: 'Shorter sentences are clearer.' });</p>
+<p class="p1"><span class="Apple-converted-space">          </span>sents.filter(s =&gt; s.split(/\s+/).length &gt; 25).slice(0, 2).forEach((s, i) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const ws = s.trim().split(/\s+/), mid = Math.floor(ws.length / 2);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>adds.push({ id: `rewrite-${i}`, title: `Simplify Sentence ${i + 1}`, desc: 'Break into shorter sentences', sugg: ws.slice(0, mid).join(' ') + '. ' + ws.slice(mid).join(' ') + '.', orig: s.trim(), pos: 'replace' });</p>
+<p class="p1"><span class="Apple-converted-space">          </span>});</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (targetKeyword) sugs.push({ id: 'vars', t: 's', title: 'Use Variations', desc: `Try "${targetKeyword}s", "best ${targetKeyword}"`, why: 'Variations help rank for related searches.' });</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>setSuggestions(sugs); setAdditions(adds);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>const toggle = (id) =&gt; { const n = new Set(selected); n.has(id) ? n.delete(id) : n.add(id); setSelected(n); };</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const addThis = (a) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>let c = content;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (a.pos === 'beginning') c = a.sugg + '\n\n' + c;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>else if (a.pos === 'end') c += '\n\n' + a.sugg;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>else if (a.pos === 'middle') { const p = c.split('\n\n'), m = Math.floor(p.length / 2); p.splice(m, 0, a.sugg); c = p.join('\n\n'); }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>else if (a.pos === 'replace' &amp;&amp; a.orig) c = c.replace(a.orig, a.sugg);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>setContent(c);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>};</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const applySel = () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>let c = content;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>suggestions.filter(s =&gt; selected.has(s.id)).forEach(s =&gt; { if (s.act === 'h1' &amp;&amp; !c.match(/^#\s/m)) c = `# ${targetKeyword || 'Title'}\n\n${c}`; });</p>
+<p class="p1"><span class="Apple-converted-space">        </span>setContent(c); setSelected(new Set());</p>
+<p class="p1"><span class="Apple-converted-space">      </span>};</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const applyAll = () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>let c = content; if (!c.match(/^#\s/m)) c = `# ${targetKeyword || 'Title'}\n\n${c}`;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>setContent(c); setSelected(new Set());</p>
+<p class="p1"><span class="Apple-converted-space">      </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>const iconMap = { e: 'alert-circle', w: 'alert-circle', i: 'lightbulb', s: 'check-circle' };</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const colorMap = { e: 'text-red-500', w: 'text-orange-500', i: 'text-blue-500', s: 'text-green-500' };</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>return e('div', { className: 'min-h-screen bg-white' },</p>
+<p class="p1"><span class="Apple-converted-space">        </span>e('div', { className: 'bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 shadow-lg' },</p>
+<p class="p1"><span class="Apple-converted-space">          </span>e('div', { className: 'max-w-7xl mx-auto px-6 py-6' },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>e('div', { className: 'flex items-center justify-between flex-wrap gap-4' },</p>
+<p class="p1"><span class="Apple-converted-space">              </span>e('div', { className: 'flex items-center gap-4' },</p>
+<p class="p1"><span class="Apple-converted-space">                </span>e('div', { className: 'w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center shadow-lg' },</p>
+<p class="p1"><span class="Apple-converted-space">                  </span>e(Icon, { name: 'sparkles', className: 'w-7 h-7 text-white' })</p>
+<p class="p1"><span class="Apple-converted-space">                </span>),</p>
+<p class="p1"><span class="Apple-converted-space">                </span>e('div', null,</p>
+<p class="p1"><span class="Apple-converted-space">                  </span>e('h1', { className: 'text-3xl font-bold text-white' }, 'SEO Content Optimizer'),</p>
+<p class="p1"><span class="Apple-converted-space">                  </span>e('p', { className: 'text-orange-400 font-medium' }, 'Powered by Smart Analytics')</p>
+<p class="p1"><span class="Apple-converted-space">                </span>)</p>
+<p class="p1"><span class="Apple-converted-space">              </span>),</p>
+<p class="p1"><span class="Apple-converted-space">              </span>e('div', { className: 'flex items-center gap-2 bg-orange-500 px-6 py-3 rounded-lg shadow-lg' },</p>
+<p class="p1"><span class="Apple-converted-space">                </span>e(Icon, { name: 'trending-up', className: 'w-5 h-5 text-white' }),</p>
+<p class="p1"><span class="Apple-converted-space">                </span>e('span', { className: 'text-white font-bold' }, 'Optimize Content')</p>
+<p class="p1"><span class="Apple-converted-space">              </span>)</p>
+<p class="p1"><span class="Apple-converted-space">            </span>)</p>
+<p class="p1"><span class="Apple-converted-space">          </span>)</p>
+<p class="p1"><span class="Apple-converted-space">        </span>),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>e('div', { className: 'max-w-7xl mx-auto px-6 py-8' },</p>
+<p class="p1"><span class="Apple-converted-space">          </span>e('div', { className: 'bg-white rounded-xl shadow-lg border-2 border-gray-200 p-6 mb-6' },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>e('label', { className: 'block text-sm font-bold text-gray-800 mb-3 uppercase tracking-wide' }, 'Target Keyword'),</p>
+<p class="p1"><span class="Apple-converted-space">            </span>e('div', { className: 'relative' },</p>
+<p class="p1"><span class="Apple-converted-space">              </span>e(Icon, { name: 'search', className: 'absolute left-4 top-3.5 w-5 h-5 text-orange-500' }),</p>
+<p class="p1"><span class="Apple-converted-space">              </span>e('input', { type: 'text', value: targetKeyword, onChange: (ev) =&gt; setTargetKeyword(ev.target.value), placeholder: 'e.g., content marketing', className: 'w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 text-lg' })</p>
+<p class="p1"><span class="Apple-converted-space">            </span>)</p>
+<p class="p1"><span class="Apple-converted-space">          </span>),</p>
+<p class="p1"><span class="Apple-converted-space">          </span>e('div', { className: 'grid grid-cols-1 lg:grid-cols-3 gap-6' },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>e('div', { className: 'lg:col-span-2' },</p>
+<p class="p1"><span class="Apple-converted-space">              </span>e('div', { className: 'bg-white rounded-xl shadow-lg border-2 border-gray-200 p-6' },</p>
+<p class="p1"><span class="Apple-converted-space">                </span>e('div', { className: 'flex items-center justify-between mb-4' },</p>
+<p class="p1"><span class="Apple-converted-space">                  </span>e('h2', { className: 'text-xl font-bold text-gray-900 uppercase tracking-wide' }, 'Content Editor'),</p>
+<p class="p1"><span class="Apple-converted-space">                  </span>e('div', { className: 'flex items-center gap-2 bg-orange-100 px-4 py-2 rounded-lg' },</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>e(Icon, { name: 'file-text', className: 'w-4 h-4 text-orange-600' }),</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>e('span', { className: 'text-sm font-bold text-orange-600' }, `${content.split(/\s+/).filter(w =&gt; w.length &gt; 0).length} words`)</p>
+<p class="p1"><span class="Apple-converted-space">                  </span>)</p>
+<p class="p1"><span class="Apple-converted-space">                </span>),</p>
+<p class="p1"><span class="Apple-converted-space">                </span>e('textarea', { value: content, onChange: (ev) =&gt; setContent(ev.target.value), placeholder: 'Paste content...\n\n# Title\n## Section\n[link](url)', className: 'w-full h-96 p-4 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 resize-none font-mono text-sm' })</p>
+<p class="p1"><span class="Apple-converted-space">              </span>)</p>
+<p class="p1"><span class="Apple-converted-space">            </span>),</p>
+<p class="p1"><span class="Apple-converted-space">            </span>e('div', { className: 'space-y-6' },</p>
+<p class="p1"><span class="Apple-converted-space">              </span>analysis &amp;&amp; e('div', { className: 'bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl shadow-lg p-6' },</p>
+<p class="p1"><span class="Apple-converted-space">                </span>e('h3', { className: 'text-lg font-bold text-white mb-4 uppercase tracking-wide' }, 'SEO Score'),</p>
+<p class="p1"><span class="Apple-converted-space">                </span>e('div', { className: 'flex justify-center mb-4' },</p>
+<p class="p1"><span class="Apple-converted-space">                  </span>e('div', { className: 'relative w-32 h-32' },</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>e('svg', { className: 'transform -rotate-90 w-32 h-32' },</p>
+<p class="p1"><span class="Apple-converted-space">                      </span>e('circle', { cx: 64, cy: 64, r: 56, stroke: '#374151', strokeWidth: 8, fill: 'none' }),</p>
+<p class="p1"><span class="Apple-converted-space">                      </span>e('circle', { cx: 64, cy: 64, r: 56, stroke: '#f97316', strokeWidth: 8, fill: 'none', strokeDasharray: `${analysis.score * 3.51} 351`, style: { transition: 'all 0.5s' } })</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>),</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>e('div', { className: 'absolute inset-0 flex items-center justify-center' },</p>
+<p class="p1"><span class="Apple-converted-space">                      </span>e('span', { className: 'text-4xl font-bold text-orange-500' }, analysis.score)</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>)</p>
+<p class="p1"><span class="Apple-converted-space">                  </span>)</p>
+<p class="p1"><span class="Apple-converted-space">                </span>),</p>
+<p class="p1"><span class="Apple-converted-space">                </span>e('p', { className: 'text-center text-sm text-gray-300 font-semibold' },</p>
+<p class="p1"><span class="Apple-converted-space">                  </span>analysis.score &gt;= 80 ? '🎉 Excellent!' : analysis.score &gt;= 60 ? '👍 Good' : '⚠️ Needs Work'</p>
+<p class="p1"><span class="Apple-converted-space">                </span>)</p>
+<p class="p1"><span class="Apple-converted-space">              </span>),</p>
+<p class="p1"><span class="Apple-converted-space">              </span>analysis &amp;&amp; e('div', { className: 'bg-white rounded-xl shadow-lg border-2 border-gray-200 p-6' },</p>
+<p class="p1"><span class="Apple-converted-space">                </span>e('h3', { className: 'text-lg font-bold text-gray-900 mb-4 uppercase tracking-wide' }, 'Metrics'),</p>
+<p class="p1"><span class="Apple-converted-space">                </span>e('div', { className: 'space-y-4' },</p>
+<p class="p1"><span class="Apple-converted-space">                  </span>[</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>['file-text', 'Word Count', analysis.wc],</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>['eye', 'Reading Level', `Grade ${analysis.gl}`],</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>targetKeyword &amp;&amp; ['hash', 'Keyword Density', `${analysis.kd}%`, true],</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>['bar-chart-3', 'Headers', `H1:${analysis.h1} H2:${analysis.h2} H3:${analysis.h3}`],</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>['link', 'Links', analysis.lc]</p>
+<p class="p1"><span class="Apple-converted-space">                  </span>].filter(Boolean).map(([icon, label, val, orange]) =&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>e('div', { key: label, className: `flex justify-between p-3 rounded-lg ${orange ? 'bg-orange-50 border border-orange-200' : 'bg-gray-50'}` },</p>
+<p class="p1"><span class="Apple-converted-space">                      </span>e('span', { className: `text-sm font-semibold flex items-center gap-2 ${orange ? 'text-orange-700' : 'text-gray-700'}` },</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>e(Icon, { name: icon, className: `w-5 h-5 ${orange ? 'text-orange-500' : 'text-orange-500'}` }),</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>label</p>
+<p class="p1"><span class="Apple-converted-space">                      </span>),</p>
+<p class="p1"><span class="Apple-converted-space">                      </span>e('span', { className: `font-bold ${orange ? 'text-orange-600' : 'text-gray-900'} text-lg` }, val)</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>)</p>
+<p class="p1"><span class="Apple-converted-space">                  </span>)</p>
+<p class="p1"><span class="Apple-converted-space">                </span>)</p>
+<p class="p1"><span class="Apple-converted-space">              </span>)</p>
+<p class="p1"><span class="Apple-converted-space">            </span>)</p>
+<p class="p1"><span class="Apple-converted-space">          </span>),</p>
+<p class="p1"><span class="Apple-converted-space">          </span>suggestions.length &gt; 0 &amp;&amp; e('div', { className: 'mt-6 bg-white rounded-xl shadow-lg border-2 border-gray-200 p-6' },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>e('div', { className: 'flex items-center justify-between mb-6 flex-wrap gap-4' },</p>
+<p class="p1"><span class="Apple-converted-space">              </span>e('h3', { className: 'text-xl font-bold text-gray-900 uppercase tracking-wide' }, 'Recommendations'),</p>
+<p class="p1"><span class="Apple-converted-space">              </span>e('div', { className: 'flex gap-3' },</p>
+<p class="p1"><span class="Apple-converted-space">                </span>selected.size &gt; 0 &amp;&amp; e('button', { onClick: applySel, className: 'px-5 py-3 bg-gray-800 text-white rounded-lg hover:bg-gray-700 text-sm font-bold shadow-lg uppercase' }, `Apply (${selected.size})`),</p>
+<p class="p1"><span class="Apple-converted-space">                </span>e('button', { onClick: applyAll, className: 'px-5 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg hover:from-orange-600 hover:to-orange-700 text-sm font-bold shadow-lg uppercase' }, 'Apply All')</p>
+<p class="p1"><span class="Apple-converted-space">              </span>)</p>
+<p class="p1"><span class="Apple-converted-space">            </span>),</p>
+<p class="p1"><span class="Apple-converted-space">            </span>e('div', { className: 'space-y-4' },</p>
+<p class="p1"><span class="Apple-converted-space">              </span>suggestions.map(s =&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>e('div', { key: s.id, className: 'border-2 border-gray-200 rounded-lg p-5 hover:shadow-lg hover:border-orange-300 transition-all' },</p>
+<p class="p1"><span class="Apple-converted-space">                  </span>e('div', { className: 'flex items-start gap-4' },</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>e('input', { type: 'checkbox', checked: selected.has(s.id), onChange: () =&gt; toggle(s.id), className: 'mt-1 w-5 h-5 text-orange-600 rounded' }),</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>e('div', { className: 'flex-1' },</p>
+<p class="p1"><span class="Apple-converted-space">                      </span>e('div', { className: 'flex items-start gap-3 mb-3' },</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>e(Icon, { name: iconMap[s.t], className: `w-6 h-6 ${colorMap[s.t]} flex-shrink-0 mt-0.5` }),</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>e('div', null,</p>
+<p class="p1"><span class="Apple-converted-space">                          </span>e('h4', { className: 'font-bold text-gray-900 text-lg' }, s.title),</p>
+<p class="p1"><span class="Apple-converted-space">                          </span>e('p', { className: 'text-sm text-gray-600 mt-1' }, s.desc)</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>)</p>
+<p class="p1"><span class="Apple-converted-space">                      </span>),</p>
+<p class="p1"><span class="Apple-converted-space">                      </span>e('div', { className: 'bg-orange-50 border-l-4 border-orange-500 p-4 rounded' },</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>e('p', { className: 'text-sm text-gray-800' },</p>
+<p class="p1"><span class="Apple-converted-space">                          </span>e('span', { className: 'font-bold text-orange-600' }, 'Why: '), s.why</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>)</p>
+<p class="p1"><span class="Apple-converted-space">                      </span>)</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>)</p>
+<p class="p1"><span class="Apple-converted-space">                  </span>)</p>
+<p class="p1"><span class="Apple-converted-space">                </span>)</p>
+<p class="p1"><span class="Apple-converted-space">              </span>)</p>
+<p class="p1"><span class="Apple-converted-space">            </span>)</p>
+<p class="p1"><span class="Apple-converted-space">          </span>),</p>
+<p class="p1"><span class="Apple-converted-space">          </span>additions.length &gt; 0 &amp;&amp; e('div', { className: 'mt-6 bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl shadow-lg border-2 border-orange-200 p-6' },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>e('div', { className: 'flex items-center gap-3 mb-6' },</p>
+<p class="p1"><span class="Apple-converted-space">              </span>e('div', { className: 'w-10 h-10 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center shadow-lg' },</p>
+<p class="p1"><span class="Apple-converted-space">                </span>e(Icon, { name: 'lightbulb', className: 'w-6 h-6 text-white' })</p>
+<p class="p1"><span class="Apple-converted-space">              </span>),</p>
+<p class="p1"><span class="Apple-converted-space">              </span>e('h3', { className: 'text-xl font-bold text-gray-900 uppercase tracking-wide' }, 'Expansion Ideas')</p>
+<p class="p1"><span class="Apple-converted-space">            </span>),</p>
+<p class="p1"><span class="Apple-converted-space">            </span>e('div', { className: 'space-y-4' },</p>
+<p class="p1"><span class="Apple-converted-space">              </span>additions.map(a =&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>e('div', { key: a.id, className: 'bg-white border-2 border-orange-200 rounded-lg p-5 hover:shadow-lg transition-shadow' },</p>
+<p class="p1"><span class="Apple-converted-space">                  </span>e('div', { className: 'flex items-start justify-between gap-4 mb-4 flex-wrap' },</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>e('div', null,</p>
+<p class="p1"><span class="Apple-converted-space">                      </span>e('h4', { className: 'font-bold text-gray-900 mb-2 text-lg' }, a.title),</p>
+<p class="p1"><span class="Apple-converted-space">                      </span>e('p', { className: 'text-sm text-gray-600' }, a.desc)</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>),</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>e('button', { onClick: () =&gt; addThis(a), className: 'px-5 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg hover:from-orange-600 hover:to-orange-700 text-sm font-bold whitespace-nowrap shadow-lg uppercase' }, 'Add This')</p>
+<p class="p1"><span class="Apple-converted-space">                  </span>),</p>
+<p class="p1"><span class="Apple-converted-space">                  </span>e('div', { className: 'bg-gray-50 rounded-lg p-4 border-2 border-gray-200' },</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>e('p', { className: 'text-xs font-bold text-gray-500 uppercase mb-2' }, 'Preview:'),</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>e('pre', { className: 'text-sm text-gray-700 whitespace-pre-wrap font-sans' }, a.sugg)</p>
+<p class="p1"><span class="Apple-converted-space">                  </span>),</p>
+<p class="p1"><span class="Apple-converted-space">                  </span>a.orig &amp;&amp; e('div', { className: 'mt-3 bg-red-50 rounded-lg p-4 border-2 border-red-200' },</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>e('p', { className: 'text-xs font-bold text-red-700 uppercase mb-2' }, 'Replaces:'),</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>e('p', { className: 'text-sm text-red-800' }, a.orig)</p>
+<p class="p1"><span class="Apple-converted-space">                  </span>)</p>
+<p class="p1"><span class="Apple-converted-space">                </span>)</p>
+<p class="p1"><span class="Apple-converted-space">              </span>)</p>
+<p class="p1"><span class="Apple-converted-space">            </span>)</p>
+<p class="p1"><span class="Apple-converted-space">          </span>)</p>
+<p class="p1"><span class="Apple-converted-space">        </span>)</p>
+<p class="p1"><span class="Apple-converted-space">      </span>);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>ReactDOM.createRoot(document.getElementById('root')).render(e(SEOContentOptimizer));</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/script&gt;</p>
+<p class="p1">&lt;/body&gt;</p>
+<p class="p1">&lt;/html&gt;</p>
+</body>
+</html>
