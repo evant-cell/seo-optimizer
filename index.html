@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SEO Content Optimizer - Genius Monkey</title>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+  <div id="root"></div>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <script>
+    const { createElement: e, useState, useEffect } = React;
+
+    function Icon({ name, className }) {
+      return e('i', { 'data-lucide': name, className });
+    }
+
+    function SEOContentOptimizer() {
+      const [content, setContent] = useState('');
+      const [targetKeyword, setTargetKeyword] = useState('');
+      const [analysis, setAnalysis] = useState(null);
+      const [suggestions, setSuggestions] = useState([]);
+      const [selected, setSelected] = useState(new Set());
+      const [additions, setAdditions] = useState([]);
+
+      useEffect(() => { lucide.createIcons(); }, [suggestions, additions, analysis]);
+      useEffect(() => {
+        if (content.length > 10) analyzeContent();
+        else { setAnalysis(null); setSuggestions([]); setAdditions([]); }
+      }, [content, targetKeyword]);
+
+      const countSyllables = (w) => {
+        w = w.toLowerCase().replace(/[^a-z]/g, '');
+        if (w.length <= 3) return 1;
+        w = w.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, '').replace(/^y/, '');
+        const s = w.match(/[aeiouy]{1,2}/g);
+        return s ? s.length : 1;
+      };
+
+      const analyzeContent = () => {
+        const words = content.trim().split(/\s+/).filter(w => w.length > 0);
+        const wc = words.length;
+        const sents = content.split(/[.!?]+/).filter(s => s.trim().length > 0);
+        const sc = sents.length;
+        const avg = sc > 0 ? wc / sc : 0;
+        const syl = words.reduce((a, w) => a + countSyllables(w), 0);
+        const gl = sc > 0 && wc > 0 ? 0.39 * (wc / sc) + 11.8 * (syl / wc) - 15.59 : 0;
+        const kc = targetKeyword ? content.toLowerCase().split(targetKeyword.toLowerCase()).length - 1 : 0;
+        const kd = wc > 0 && targetKeyword ? ((kc / wc) * 100).toFixed(2) : 0;
+        const h1 = (content.match(/^#\s/gm) || []).length;
+        const h2 = (content.match(/^##\s/gm) || []).length;
+        const h3 = (content.match(/^###\s/gm) || []).length;
+        const lc = (content.match(/\[([^\]]+)\]\(([^)]+)\)/g) || []).length;
+
+        let score = 0;
+        if (wc >= 300) score += 20; else if (wc >= 150) score += 10;
+        if (kd > 0.5 && kd < 3) score += 20; else if (kd > 0) score += 10;
+        if (gl >= 6 && gl <= 9) score += 20; else if (gl >= 5 && gl <= 11) score += 10;
+        if (h1 >= 1) score += 10; if (h2 >= 2) score += 10; if (lc >= 2) score += 10; if (avg < 25) score += 10;
+
+        setAnalysis({ score, wc, sc, avg: avg.toFixed(1), gl: Math.max(1, Math.min(12, gl)).toFixed(1), kc, kd, h1, h2, h3, lc });
+
+        const sugs = [], adds = [];
+        if (wc < 300) {
+          sugs.push({ id: 'wc', t: 'w', title: 'Content Too Short', desc: `${wc} words. Aim for 300-500.`, why: 'Longer content ranks better.' });
+          if (targetKeyword) {
+            adds.push({ id: 'intro', title: 'Add Introduction', desc: 'Context about topic', sugg: `Have you wondered about ${targetKeyword}? Understanding ${targetKeyword} is essential.`, pos: 'beginning' });
+            adds.push({ id: 'benefits', title: 'Add Benefits', desc: 'Explain advantages', sugg: `## Benefits of ${targetKeyword}\n\n- Improve strategy\n- Increase results\n- Save resources`, pos: 'middle' });
+          }
+        }
+        if (targetKeyword && kd < 0.5) sugs.push({ id: 'kd-low', t: 'w', title: 'Keyword Underused', desc: `"${targetKeyword}" appears ${kc} times (${kd}%). Aim for 1-2%.`, why: 'Keywords help search engines understand topics.' });
+        if (targetKeyword && kd > 3) sugs.push({ id: 'stuff', t: 'e', title: 'Keyword Stuffing', desc: `${kd}% is too high.`, why: 'Overuse appears spammy.' });
+        if (h1 === 0) sugs.push({ id: 'h1', t: 'e', title: 'Missing H1', desc: 'Add main heading with #', why: 'H1 tells search engines your topic.', act: 'h1' });
+        if (h1 > 1) sugs.push({ id: 'multi-h1', t: 'w', title: 'Multiple H1s', desc: `${h1} H1s. Use one.`, why: 'Multiple H1s confuse search engines.' });
+        if (h2 < 2) sugs.push({ id: 'h2', t: 'i', title: 'Add Subheadings', desc: 'Include 2-3 H2s', why: 'Improves structure and readability.' });
+        if (lc < 2) sugs.push({ id: 'links', t: 'i', title: 'Add Links', desc: 'Internal and external links', why: 'Shows well-researched content.' });
+        if (gl > 10) sugs.push({ id: 'read', t: 'w', title: 'Improve Readability', desc: `Grade ${Math.min(12, gl).toFixed(1)}. Aim 6-9.`, why: 'Easier content keeps visitors engaged.' });
+        if (avg > 25) {
+          sugs.push({ id: 'sent', t: 'i', title: 'Shorten Sentences', desc: `Avg ${avg.toFixed(0)} words. Aim under 20.`, why: 'Shorter sentences are clearer.' });
+          sents.filter(s => s.split(/\s+/).length > 25).slice(0, 2).forEach((s, i) => {
+            const ws = s.trim().split(/\s+/), mid = Math.floor(ws.length / 2);
+            adds.push({ id: `rewrite-${i}`, title: `Simplify Sentence ${i + 1}`, desc: 'Break into shorter sentences', sugg: ws.slice(0, mid).join(' ') + '. ' + ws.slice(mid).join(' ') + '.', orig: s.trim(), pos: 'replace' });
+          });
+        }
+        if (targetKeyword) sugs.push({ id: 'vars', t: 's', title: 'Use Variations', desc: `Try "${targetKeyword}s", "best ${targetKeyword}"`, why: 'Variations help rank for related searches.' });
+
+        setSuggestions(sugs); setAdditions(adds);
+      };
+
+      const toggle = (id) => { const n = new Set(selected); n.has(id) ? n.delete(id) : n.add(id); setSelected(n); };
+      const addThis = (a) => {
+        let c = content;
+        if (a.pos === 'beginning') c = a.sugg + '\n\n' + c;
+        else if (a.pos === 'end') c += '\n\n' + a.sugg;
+        else if (a.pos === 'middle') { const p = c.split('\n\n'), m = Math.floor(p.length / 2); p.splice(m, 0, a.sugg); c = p.join('\n\n'); }
+        else if (a.pos === 'replace' && a.orig) c = c.replace(a.orig, a.sugg);
+        setContent(c);
+      };
+      const applySel = () => {
+        let c = content;
+        suggestions.filter(s => selected.has(s.id)).forEach(s => { if (s.act === 'h1' && !c.match(/^#\s/m)) c = `# ${targetKeyword || 'Title'}\n\n${c}`; });
+        setContent(c); setSelected(new Set());
+      };
+      const applyAll = () => {
+        let c = content; if (!c.match(/^#\s/m)) c = `# ${targetKeyword || 'Title'}\n\n${c}`;
+        setContent(c); setSelected(new Set());
+      };
+
+      const iconMap = { e: 'alert-circle', w: 'alert-circle', i: 'lightbulb', s: 'check-circle' };
+      const colorMap = { e: 'text-red-500', w: 'text-orange-500', i: 'text-blue-500', s: 'text-green-500' };
+
+      return e('div', { className: 'min-h-screen bg-white' },
+        e('div', { className: 'bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 shadow-lg' },
+          e('div', { className: 'max-w-7xl mx-auto px-6 py-6' },
+            e('div', { className: 'flex items-center justify-between flex-wrap gap-4' },
+              e('div', { className: 'flex items-center gap-4' },
+                e('div', { className: 'w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center shadow-lg' },
+                  e(Icon, { name: 'sparkles', className: 'w-7 h-7 text-white' })
+                ),
+                e('div', null,
+                  e('h1', { className: 'text-3xl font-bold text-white' }, 'SEO Content Optimizer'),
+                  e('p', { className: 'text-orange-400 font-medium' }, 'Powered by Smart Analytics')
+                )
+              ),
+              e('div', { className: 'flex items-center gap-2 bg-orange-500 px-6 py-3 rounded-lg shadow-lg' },
+                e(Icon, { name: 'trending-up', className: 'w-5 h-5 text-white' }),
+                e('span', { className: 'text-white font-bold' }, 'Optimize Content')
+              )
+            )
+          )
+        ),
+        e('div', { className: 'max-w-7xl mx-auto px-6 py-8' },
+          e('div', { className: 'bg-white rounded-xl shadow-lg border-2 border-gray-200 p-6 mb-6' },
+            e('label', { className: 'block text-sm font-bold text-gray-800 mb-3 uppercase tracking-wide' }, 'Target Keyword'),
+            e('div', { className: 'relative' },
+              e(Icon, { name: 'search', className: 'absolute left-4 top-3.5 w-5 h-5 text-orange-500' }),
+              e('input', { type: 'text', value: targetKeyword, onChange: (ev) => setTargetKeyword(ev.target.value), placeholder: 'e.g., content marketing', className: 'w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 text-lg' })
+            )
+          ),
+          e('div', { className: 'grid grid-cols-1 lg:grid-cols-3 gap-6' },
+            e('div', { className: 'lg:col-span-2' },
+              e('div', { className: 'bg-white rounded-xl shadow-lg border-2 border-gray-200 p-6' },
+                e('div', { className: 'flex items-center justify-between mb-4' },
+                  e('h2', { className: 'text-xl font-bold text-gray-900 uppercase tracking-wide' }, 'Content Editor'),
+                  e('div', { className: 'flex items-center gap-2 bg-orange-100 px-4 py-2 rounded-lg' },
+                    e(Icon, { name: 'file-text', className: 'w-4 h-4 text-orange-600' }),
+                    e('span', { className: 'text-sm font-bold text-orange-600' }, `${content.split(/\s+/).filter(w => w.length > 0).length} words`)
+                  )
+                ),
+                e('textarea', { value: content, onChange: (ev) => setContent(ev.target.value), placeholder: 'Paste content...\n\n# Title\n## Section\n[link](url)', className: 'w-full h-96 p-4 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 resize-none font-mono text-sm' })
+              )
+            ),
+            e('div', { className: 'space-y-6' },
+              analysis && e('div', { className: 'bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl shadow-lg p-6' },
+                e('h3', { className: 'text-lg font-bold text-white mb-4 uppercase tracking-wide' }, 'SEO Score'),
+                e('div', { className: 'flex justify-center mb-4' },
+                  e('div', { className: 'relative w-32 h-32' },
+                    e('svg', { className: 'transform -rotate-90 w-32 h-32' },
+                      e('circle', { cx: 64, cy: 64, r: 56, stroke: '#374151', strokeWidth: 8, fill: 'none' }),
+                      e('circle', { cx: 64, cy: 64, r: 56, stroke: '#f97316', strokeWidth: 8, fill: 'none', strokeDasharray: `${analysis.score * 3.51} 351`, style: { transition: 'all 0.5s' } })
+                    ),
+                    e('div', { className: 'absolute inset-0 flex items-center justify-center' },
+                      e('span', { className: 'text-4xl font-bold text-orange-500' }, analysis.score)
+                    )
+                  )
+                ),
+                e('p', { className: 'text-center text-sm text-gray-300 font-semibold' },
+                  analysis.score >= 80 ? '🎉 Excellent!' : analysis.score >= 60 ? '👍 Good' : '⚠️ Needs Work'
+                )
+              ),
+              analysis && e('div', { className: 'bg-white rounded-xl shadow-lg border-2 border-gray-200 p-6' },
+                e('h3', { className: 'text-lg font-bold text-gray-900 mb-4 uppercase tracking-wide' }, 'Metrics'),
+                e('div', { className: 'space-y-4' },
+                  [
+                    ['file-text', 'Word Count', analysis.wc],
+                    ['eye', 'Reading Level', `Grade ${analysis.gl}`],
+                    targetKeyword && ['hash', 'Keyword Density', `${analysis.kd}%`, true],
+                    ['bar-chart-3', 'Headers', `H1:${analysis.h1} H2:${analysis.h2} H3:${analysis.h3}`],
+                    ['link', 'Links', analysis.lc]
+                  ].filter(Boolean).map(([icon, label, val, orange]) =>
+                    e('div', { key: label, className: `flex justify-between p-3 rounded-lg ${orange ? 'bg-orange-50 border border-orange-200' : 'bg-gray-50'}` },
+                      e('span', { className: `text-sm font-semibold flex items-center gap-2 ${orange ? 'text-orange-700' : 'text-gray-700'}` },
+                        e(Icon, { name: icon, className: `w-5 h-5 text-orange-500` }),
+                        label
+                      ),
+                      e('span', { className: `font-bold ${orange ? 'text-orange-600' : 'text-gray-900'} text-lg` }, val)
+                    )
+                  )
+                )
+              )
+            )
+          ),
+          suggestions.length > 0 && e('div', { className: 'mt-6 bg-white rounded-xl shadow-lg border-2 border-gray-200 p-6' },
+            e('div', { className: 'flex items-center justify-between mb-6 flex-wrap gap-4' },
+              e('h3', { className: 'text-xl font-bold text-gray-900 uppercase tracking-wide' }, 'Recommendations'),
+              e('div', { className: 'flex gap-3' },
+                selected.size > 0 && e('button', { onClick: applySel, className: 'px-5 py-3 bg-gray-800 text-white rounded-lg hover:bg-gray-700 text-sm font-bold shadow-lg uppercase' }, `Apply (${selected.size})`),
+                e('button', { onClick: applyAll, className: 'px-5 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg hover:from-orange-600 hover:to-orange-700 text-sm font-bold shadow-lg uppercase' }, 'Apply All')
+              )
+            ),
+            e('div', { className: 'space-y-4' },
+              suggestions.map(s =>
+                e('div', { key: s.id, className: 'border-2 border-gray-200 rounded-lg p-5 hover:shadow-lg hover:border-orange-300 transition-all' },
+                  e('div', { className: 'flex items-start gap-4' },
+                    e('input', { type: 'checkbox', checked: selected.has(s.id), onChange: () => toggle(s.id), className: 'mt-1 w-5 h-5 text-orange-600 rounded' }),
+                    e('div', { className: 'flex-1' },
+                      e('div', { className: 'flex items-start gap-3 mb-3' },
+                        e(Icon, { name: iconMap[s.t], className: `w-6 h-6 ${colorMap[s.t]} flex-shrink-0 mt-0.5` }),
+                        e('div', null,
+                          e('h4', { className: 'font-bold text-gray-900 text-lg' }, s.title),
+                          e('p', { className: 'text-sm text-gray-600 mt-1' }, s.desc)
+                        )
+                      ),
+                      e('div', { className: 'bg-orange-50 border-l-4 border-orange-500 p-4 rounded' },
+                        e('p', { className: 'text-sm text-gray-800' },
+                          e('span', { className: 'font-bold text-orange-600' }, 'Why: '), s.why
+                        )
+                      )
+                    )
+                  )
+                )
+              )
+            )
+          ),
+          additions.length > 0 && e('div', { className: 'mt-6 bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl shadow-lg border-2 border-orange-200 p-6' },
+            e('div', { className: 'flex items-center gap-3 mb-6' },
+              e('div', { className: 'w-10 h-10 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center shadow-lg' },
+                e(Icon, { name: 'lightbulb', className: 'w-6 h-6 text-white' })
+              ),
+              e('h3', { className: 'text-xl font-bold text-gray-900 uppercase tracking-wide' }, 'Expansion Ideas')
+            ),
+            e('div', { className: 'space-y-4' },
+              additions.map(a =>
+                e('div', { key: a.id, className: 'bg-white border-2 border-orange-200 rounded-lg p-5 hover:shadow-lg transition-shadow' },
+                  e('div', { className: 'flex items-start justify-between gap-4 mb-4 flex-wrap' },
+                    e('div', null,
+                      e('h4', { className: 'font-bold text-gray-900 mb-2 text-lg' }, a.title),
+                      e('p', { className: 'text-sm text-gray-600' }, a.desc)
+                    ),
+                    e('button', { onClick: () => addThis(a), className: 'px-5 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg hover:from-orange-600 hover:to-orange-700 text-sm font-bold whitespace-nowrap shadow-lg uppercase' }, 'Add This')
+                  ),
+                  e('div', { className: 'bg-gray-50 rounded-lg p-4 border-2 border-gray-200' },
+                    e('p', { className: 'text-xs font-bold text-gray-500 uppercase mb-2' }, 'Preview:'),
+                    e('pre', { className: 'text-sm text-gray-700 whitespace-pre-wrap font-sans' }, a.sugg)
+                  ),
+                  a.orig && e('div', { className: 'mt-3 bg-red-50 rounded-lg p-4 border-2 border-red-200' },
+                    e('p', { className: 'text-xs font-bold text-red-700 uppercase mb-2' }, 'Replaces:'),
+                    e('p', { className: 'text-sm text-red-800' }, a.orig)
+                  )
+                )
+              )
+            )
+          )
+        )
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(e(SEOContentOptimizer));
+  </script>
+</body>
+</html>
