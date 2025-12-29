@@ -1812,39 +1812,88 @@
             analyzeContent();
         }, 300));
 
-        // GSC Connection (Simulated for demo)
+        // GSC Connection (Real OAuth)
         function connectGSC(propertyUrl) {
-            gscConnected = true;
-            updateGSCStatus(true);
+            // Store the property URL for later use
+            localStorage.setItem('gsc_property_url', propertyUrl);
             
-            const connectButtons = [
-                document.getElementById('connectGSC'),
-                document.getElementById('connectGSCMobile')
-            ];
+            // Open OAuth popup
+            const width = 600;
+            const height = 700;
+            const left = (screen.width / 2) - (width / 2);
+            const top = (screen.height / 2) - (height / 2);
             
-            connectButtons.forEach(btn => {
-                btn.textContent = 'Disconnect GSC';
-                btn.classList.remove('btn-success');
-                btn.classList.add('btn-secondary');
+            const popup = window.open(
+                'https://seo-optimizer-lake.vercel.app/api/auth/google',
+                'Connect Google Search Console',
+                `width=${width},height=${height},left=${left},top=${top}`
+            );
+            
+            // Listen for success message from popup
+            window.addEventListener('message', (event) => {
+                if (event.data.type === 'GSC_CONNECTED') {
+                    gscConnected = true;
+                    updateGSCStatus(true);
+                    
+                    const connectButtons = [
+                        document.getElementById('connectGSC'),
+                        document.getElementById('connectGSCMobile')
+                    ];
+                    
+                    connectButtons.forEach(btn => {
+                        btn.textContent = 'Connected ✓';
+                        btn.classList.remove('btn-success');
+                        btn.classList.add('btn-secondary');
+                    });
+                }
             });
-            
-            alert('Successfully connected to Google Search Console!\n\nYou can now fetch live ranking data for any URL.');
         }
 
-        // Fetch GSC Data (Simulated)
+        // Fetch GSC Data (Real API)
         async function fetchGSCDataForUrl(url) {
             currentUrl = url;
             
             document.getElementById('fetchGSCData').innerHTML = '<span class="loading"></span>';
             
-            await new Promise(resolve => setTimeout(resolve, 1500));
+            const accessToken = localStorage.getItem('gsc_access_token');
+            const propertyUrl = localStorage.getItem('gsc_property_url');
             
-            gscData = generateSimulatedGSCData();
-            displayGSCData(gscData);
+            if (!accessToken) {
+                alert('Please connect to Google Search Console first');
+                document.getElementById('fetchGSCData').textContent = 'Fetch GSC Data';
+                return;
+            }
+            
+            try {
+                const response = await fetch('https://seo-optimizer-lake.vercel.app/api/gsc-data', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        targetUrl: url,
+                        accessToken: accessToken,
+                        propertyUrl: propertyUrl
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                
+                // Process real GSC data
+                gscData = processGSCData(data);
+                displayGSCData(gscData);
+                
+                document.getElementById('gscDataSection').style.display = 'block';
+            } catch (error) {
+                console.error('Error fetching GSC data:', error);
+                alert('Failed to fetch GSC data: ' + error.message + '\n\nTry reconnecting to GSC or check if the URL exists in your Search Console property.');
+            }
             
             document.getElementById('fetchGSCData').textContent = 'Refresh Data';
-            document.getElementById('gscDataSection').style.display = 'block';
-            
             analyzeContent();
         }
 
@@ -1868,6 +1917,55 @@
                     { query: 'programmatic advertising examples', position: position + 8, clicks: Math.floor(clicks * 0.12), impressions: Math.floor(impressions * 0.15), ctr: 1.5 },
                     { query: 'how does programmatic advertising work', position: position + 10, clicks: Math.floor(clicks * 0.08), impressions: Math.floor(impressions * 0.1), ctr: 0.9 }
                 ]
+            };
+        }
+
+        // Process Real GSC API Data
+        function processGSCData(rawData) {
+            const rows = rawData.rows || [];
+            
+            if (rows.length === 0) {
+                return {
+                    position: 0,
+                    clicks: 0,
+                    impressions: 0,
+                    ctr: 0,
+                    queries: []
+                };
+            }
+            
+            let totalClicks = 0;
+            let totalImpressions = 0;
+            let positionSum = 0;
+            let count = 0;
+            
+            const queries = rows.map(row => {
+                const query = row.keys[0];
+                const clicks = row.clicks || 0;
+                const impressions = row.impressions || 0;
+                const position = row.position || 0;
+                const ctr = row.ctr || 0;
+                
+                totalClicks += clicks;
+                totalImpressions += impressions;
+                positionSum += position;
+                count++;
+                
+                return {
+                    query: query,
+                    position: Math.round(position),
+                    clicks: clicks,
+                    impressions: impressions,
+                    ctr: (ctr * 100).toFixed(2)
+                };
+            }).sort((a, b) => b.clicks - a.clicks);
+            
+            return {
+                position: count > 0 ? Math.round(positionSum / count) : 0,
+                clicks: totalClicks,
+                impressions: totalImpressions,
+                ctr: totalImpressions > 0 ? ((totalClicks / totalImpressions) * 100).toFixed(2) : 0,
+                queries: queries
             };
         }
 
@@ -2284,6 +2382,28 @@
                     closeMobileMenu();
                 }
             });
+        });
+
+        // Check if already connected on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            const accessToken = localStorage.getItem('gsc_access_token');
+            const tokenExpiry = localStorage.getItem('gsc_token_expiry');
+            
+            if (accessToken && tokenExpiry && Date.now() < parseInt(tokenExpiry)) {
+                gscConnected = true;
+                updateGSCStatus(true);
+                
+                const connectButtons = [
+                    document.getElementById('connectGSC'),
+                    document.getElementById('connectGSCMobile')
+                ];
+                
+                connectButtons.forEach(btn => {
+                    btn.textContent = 'Connected ✓';
+                    btn.classList.remove('btn-success');
+                    btn.classList.add('btn-secondary');
+                });
+            }
         });
     </script>
 </body>
