@@ -1,264 +1,2242 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SEO Content Optimizer - Genius Monkey</title>
-  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEO Content Editor Pro | Genius Monkey</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Genius Monkey Brand Colors */
+            --gm-orange: #FF7900;
+            --gm-orange-light: #FF8F1F;
+            --gm-orange-dark: #E66D00;
+            --gm-navy: #0A2463;
+            --gm-navy-light: #1E3A8A;
+            --gm-dark: #1a1a2e;
+            --gm-light: #f8f9fa;
+            --gm-gray: #4a5568;
+            --gm-border: #e2e8f0;
+            
+            /* Status Colors */
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            
+            /* Content Highlighting */
+            --hard-read: #ef4444;
+            --medium-read: #f59e0b;
+            --passive: #3b82f6;
+            --adverb: #8b5cf6;
+            --complex: #10b981;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--gm-light);
+            color: var(--gm-dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gm-navy);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: white;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gm-orange);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+            position: relative;
+        }
+
+        /* Atomic atom design */
+        .logo-icon::before,
+        .logo-icon::after {
+            content: '';
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            border: 2px solid var(--gm-orange);
+            border-radius: 50%;
+            opacity: 0.4;
+        }
+
+        .logo-icon::before {
+            transform: rotate(45deg);
+        }
+
+        .logo-icon::after {
+            transform: rotate(-45deg);
+        }
+
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .logo-subtitle {
+            font-size: 0.75rem;
+            color: var(--gm-orange);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .gsc-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: white;
+        }
+
+        .gsc-status.connected {
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid var(--success);
+        }
+
+        .gsc-status.disconnected {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid var(--danger);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: currentColor;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .tab {
+            padding: 0.5rem 1.5rem;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.7);
+            border-radius: 6px;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .tab:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .tab.active {
+            background: var(--gm-orange);
+            color: white;
+            font-weight: 600;
+        }
+
+        .actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.6rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--gm-orange);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--gm-orange-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(255, 121, 0, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        /* Main Content */
+        .main-content {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* Editor Area */
+        .editor-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: white;
+            border-right: 2px solid var(--gm-border);
+        }
+
+        .editor-toolbar {
+            padding: 1.25rem 2rem;
+            background: linear-gradient(135deg, var(--gm-navy) 0%, var(--gm-navy-light) 100%);
+            border-bottom: 3px solid var(--gm-orange);
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .toolbar-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .editor-toolbar label {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 600;
+            white-space: nowrap;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .editor-toolbar input {
+            flex: 1;
+            padding: 0.6rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            font-size: 0.9rem;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .editor-toolbar input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .editor-toolbar input:focus {
+            outline: none;
+            border-color: var(--gm-orange);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .url-input-group {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            flex: 1;
+        }
+
+        .url-input-group input {
+            flex: 1;
+        }
+
+        #editor {
+            flex: 1;
+            padding: 2.5rem;
+            overflow-y: auto;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            outline: none;
+            color: var(--gm-dark);
+        }
+
+        #editor:empty:before {
+            content: 'Start writing your content here... Genius Monkey will optimize it in real-time.';
+            color: #94a3b8;
+        }
+
+        /* Highlighting styles */
+        .hard-sentence {
+            background-color: rgba(239, 68, 68, 0.15);
+            border-bottom: 2px solid var(--hard-read);
+            cursor: help;
+        }
+
+        .medium-sentence {
+            background-color: rgba(245, 158, 11, 0.15);
+            border-bottom: 2px solid var(--medium-read);
+            cursor: help;
+        }
+
+        .passive-voice {
+            background-color: rgba(59, 130, 246, 0.15);
+            border-bottom: 2px solid var(--passive);
+            cursor: help;
+        }
+
+        .adverb {
+            background-color: rgba(139, 92, 246, 0.15);
+            border-bottom: 2px solid var(--adverb);
+            cursor: help;
+        }
+
+        .complex-word {
+            background-color: rgba(16, 185, 129, 0.15);
+            border-bottom: 2px solid var(--complex);
+            cursor: help;
+        }
+
+        .keyword-primary {
+            background: linear-gradient(120deg, rgba(255, 121, 0, 0.2) 0%, rgba(255, 121, 0, 0.1) 100%);
+            font-weight: 600;
+            color: var(--gm-orange-dark);
+        }
+
+        .keyword-secondary {
+            background-color: rgba(10, 36, 99, 0.1);
+            color: var(--gm-navy);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 420px;
+            background: white;
+            overflow-y: auto;
+            padding: 2rem;
+        }
+
+        .score-card {
+            background: linear-gradient(135deg, var(--gm-orange) 0%, var(--gm-orange-dark) 100%);
+            color: white;
+            padding: 2.5rem;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 16px rgba(255, 121, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .score-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        }
+
+        .score-value {
+            font-size: 4.5rem;
+            font-weight: 700;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+            position: relative;
+        }
+
+        .score-label {
+            font-size: 1.1rem;
+            opacity: 0.95;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+            position: relative;
+        }
+
+        /* GSC Data Cards */
+        .gsc-card {
+            background: linear-gradient(135deg, var(--gm-navy) 0%, var(--gm-navy-light) 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--gm-orange);
+            box-shadow: 0 4px 8px rgba(10, 36, 99, 0.2);
+        }
+
+        .gsc-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .gsc-card-title {
+            font-size: 0.85rem;
+            opacity: 0.9;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .gsc-badge {
+            background: var(--gm-orange);
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .gsc-card-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .gsc-card-detail {
+            font-size: 0.85rem;
+            opacity: 0.8;
+            margin-top: 0.5rem;
+        }
+
+        .gsc-trend {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-weight: 600;
+        }
+
+        .metric-card {
+            background: var(--gm-light);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            border-left: 3px solid var(--gm-orange);
+        }
+
+        .metric-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .metric-title {
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--gm-navy);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .metric-value {
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: var(--gm-orange);
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--gm-orange), var(--gm-orange-dark));
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+
+        .metric-detail {
+            font-size: 0.85rem;
+            color: var(--gm-gray);
+            font-weight: 500;
+        }
+
+        .issue-list {
+            margin-top: 1rem;
+        }
+
+        .issue-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem;
+            background: white;
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            border-left: 3px solid transparent;
+        }
+
+        .issue-item:hover {
+            border-left-color: var(--gm-orange);
+            background: var(--gm-light);
+        }
+
+        .issue-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+            margin-right: 0.75rem;
+        }
+
+        .issue-count {
+            margin-left: auto;
+            font-weight: 700;
+            color: var(--gm-navy);
+            background: var(--gm-light);
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin: 2rem 0 1rem;
+            color: var(--gm-navy);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 20px;
+            background: var(--gm-orange);
+            border-radius: 2px;
+        }
+
+        .seo-checklist {
+            list-style: none;
+        }
+
+        .seo-checklist li {
+            padding: 0.75rem;
+            background: white;
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+            border: 1px solid var(--gm-border);
+            transition: all 0.2s;
+        }
+
+        .seo-checklist li:hover {
+            border-color: var(--gm-orange);
+            box-shadow: 0 2px 4px rgba(255, 121, 0, 0.1);
+        }
+
+        .check-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+
+        .check-icon.pass {
+            background: var(--success);
+            color: white;
+        }
+
+        .check-icon.fail {
+            background: var(--danger);
+            color: white;
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: fixed;
+            background: var(--gm-navy);
+            color: white;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            max-width: 300px;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            border: 2px solid var(--gm-orange);
+        }
+
+        .tooltip.show {
+            display: block;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 1.25rem;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid var(--gm-border);
+            transition: all 0.2s;
+        }
+
+        .stat-item:hover {
+            border-color: var(--gm-orange);
+            box-shadow: 0 4px 8px rgba(255, 121, 0, 0.1);
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--gm-orange);
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--gm-gray);
+            margin-top: 0.25rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        /* Opportunities Section */
+        .opportunity-card {
+            background: white;
+            padding: 1.25rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--gm-orange);
+            border: 1px solid var(--gm-border);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .opportunity-title {
+            font-weight: 700;
+            color: var(--gm-navy);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .opportunity-desc {
+            font-size: 0.85rem;
+            color: var(--gm-gray);
+            line-height: 1.6;
+        }
+
+        .opportunity-metric {
+            display: inline-block;
+            background: var(--gm-light);
+            padding: 0.25rem 0.6rem;
+            border-radius: 4px;
+            font-weight: 700;
+            color: var(--gm-orange);
+            font-size: 0.85rem;
+            margin-right: 0.5rem;
+            border: 1px solid var(--gm-orange);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 36, 99, 0.7);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 12px;
+            max-width: 500px;
+            width: 90%;
+            border-top: 4px solid var(--gm-orange);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--gm-navy);
+        }
+
+        .modal-body {
+            margin-bottom: 1.5rem;
+            color: var(--gm-gray);
+        }
+
+        .modal-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--gm-border);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .modal-input:focus {
+            outline: none;
+            border-color: var(--gm-orange);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Keyword suggestions */
+        .keyword-suggestions {
+            margin-top: 1rem;
+        }
+
+        .keyword-suggestion-item {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+            border-left: 3px solid var(--gm-orange);
+            border: 1px solid var(--gm-border);
+            transition: all 0.2s;
+        }
+
+        .keyword-suggestion-item:hover {
+            box-shadow: 0 4px 8px rgba(255, 121, 0, 0.1);
+            border-left-width: 4px;
+        }
+
+        .keyword-suggestion-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .keyword-text {
+            font-weight: 700;
+            color: var(--gm-navy);
+        }
+
+        .keyword-position {
+            background: var(--gm-orange);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .keyword-stats {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.8rem;
+            color: var(--gm-gray);
+        }
+
+        .keyword-stat {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        /* Brand Footer */
+        .brand-footer {
+            padding: 0.75rem 2rem;
+            background: var(--gm-navy);
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.8rem;
+            text-align: center;
+            border-top: 2px solid var(--gm-orange);
+        }
+
+        .brand-footer a {
+            color: var(--gm-orange);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .brand-footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Mobile Menu */
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: -100%;
+            width: 80%;
+            max-width: 300px;
+            height: 100vh;
+            background: var(--gm-navy);
+            z-index: 10000;
+            padding: 2rem;
+            transition: left 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .mobile-nav.active {
+            left: 0;
+        }
+
+        .mobile-nav-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+        }
+
+        .mobile-nav-overlay.active {
+            display: block;
+        }
+
+        .mobile-nav-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--gm-orange);
+        }
+
+        .mobile-nav-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .mobile-nav .tabs {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .mobile-nav .tab {
+            width: 100%;
+            text-align: left;
+            padding: 1rem;
+        }
+
+        .mobile-nav .actions {
+            flex-direction: column;
+            margin-top: 2rem;
+            gap: 0.75rem;
+        }
+
+        .mobile-nav .btn {
+            width: 100%;
+        }
+
+        .mobile-nav .gsc-status {
+            width: 100%;
+            justify-content: center;
+        }
+
+        /* Responsive Breakpoints */
+        
+        /* Large tablets and small desktops (1400px and below) */
+        @media (max-width: 1400px) {
+            .sidebar {
+                width: 380px;
+            }
+
+            .score-value {
+                font-size: 3.5rem;
+            }
+
+            .gsc-card-value {
+                font-size: 2rem;
+            }
+        }
+
+        /* Compact header for medium screens (1200px and below) */
+        @media (max-width: 1200px) {
+            .btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.85rem;
+            }
+
+            .gsc-status span:last-child {
+                display: none;
+            }
+
+            .gsc-status {
+                width: 32px;
+                height: 32px;
+                padding: 0;
+                border-radius: 50%;
+                justify-content: center;
+            }
+
+            .actions {
+                gap: 0.5rem;
+            }
+        }
+
+        /* Tablets (1024px and below) */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 320px;
+            }
+
+            .header {
+                padding: 1rem;
+                gap: 0.5rem;
+            }
+
+            .logo {
+                margin-right: auto;
+            }
+
+            .actions {
+                gap: 0.5rem;
+            }
+
+            .btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.85rem;
+            }
+
+            .gsc-status {
+                font-size: 0.75rem;
+                padding: 0.4rem 0.75rem;
+            }
+
+            .logo-text {
+                display: none;
+            }
+
+            .tabs {
+                gap: 0.25rem;
+            }
+
+            .tab {
+                padding: 0.5rem 1rem;
+                font-size: 0.85rem;
+            }
+
+            .editor-toolbar {
+                padding: 1rem;
+            }
+
+            .toolbar-group {
+                min-width: 200px;
+            }
+
+            #editor {
+                padding: 1.5rem;
+                font-size: 1rem;
+            }
+
+            .score-value {
+                font-size: 3rem;
+            }
+
+            .section-title {
+                font-size: 1rem;
+            }
+        }
+
+        /* Medium tablets - start hiding some buttons (900px and below) */
+        @media (max-width: 900px) {
+            .header .actions .btn-secondary {
+                display: none;
+            }
+
+            .tabs {
+                display: none;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .mobile-nav {
+                display: block;
+            }
+        }
+
+        /* Mobile landscape and small tablets (768px and below) */
+        @media (max-width: 768px) {
+            .container {
+                height: auto;
+                min-height: 100vh;
+            }
+
+            .header {
+                padding: 0.75rem 1rem;
+            }
+
+            .logo {
+                flex: 1;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+                order: 3;
+            }
+
+            .tabs {
+                display: none;
+            }
+
+            .actions {
+                display: none;
+            }
+
+            .mobile-nav {
+                display: block;
+            }
+
+            .main-content {
+                flex-direction: column;
+            }
+
+            .editor-section {
+                border-right: none;
+                border-bottom: 2px solid var(--gm-border);
+                min-height: 400px;
+            }
+
+            .editor-toolbar {
+                flex-direction: column;
+                gap: 0.75rem;
+                padding: 1rem;
+            }
+
+            .toolbar-group {
+                width: 100%;
+                min-width: auto;
+            }
+
+            .toolbar-group input {
+                width: 100%;
+            }
+
+            .url-input-group {
+                flex-direction: column;
+            }
+
+            .url-input-group .btn {
+                width: 100%;
+            }
+
+            #editor {
+                min-height: 300px;
+                padding: 1rem;
+            }
+
+            .sidebar {
+                width: 100%;
+                padding: 1rem;
+            }
+
+            .score-card {
+                padding: 1.5rem;
+            }
+
+            .score-value {
+                font-size: 2.5rem;
+            }
+
+            .gsc-card {
+                padding: 1rem;
+            }
+
+            .gsc-card-value {
+                font-size: 1.75rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 0.5rem;
+            }
+
+            .stat-item {
+                padding: 0.75rem;
+            }
+
+            .stat-value {
+                font-size: 1.4rem;
+            }
+
+            .metric-card {
+                padding: 1rem;
+            }
+
+            .section-title {
+                font-size: 0.95rem;
+                margin: 1.5rem 0 0.75rem;
+            }
+
+            .opportunity-card {
+                padding: 1rem;
+            }
+
+            .keyword-suggestion-item {
+                padding: 0.75rem;
+            }
+
+            .modal-content {
+                padding: 1.5rem;
+                width: 95%;
+            }
+
+            .brand-footer {
+                padding: 0.75rem 1rem;
+                font-size: 0.7rem;
+            }
+        }
+
+        /* Mobile portrait (480px and below) */
+        @media (max-width: 480px) {
+            .logo-icon {
+                width: 35px;
+                height: 35px;
+                font-size: 1rem;
+            }
+
+            .logo-icon::before,
+            .logo-icon::after {
+                width: 40px;
+                height: 40px;
+            }
+
+            .logo-title {
+                font-size: 0.9rem;
+            }
+
+            .logo-subtitle {
+                font-size: 0.65rem;
+            }
+
+            .editor-toolbar label {
+                font-size: 0.75rem;
+            }
+
+            .editor-toolbar input {
+                font-size: 0.85rem;
+                padding: 0.5rem;
+            }
+
+            #editor {
+                font-size: 0.95rem;
+                line-height: 1.6;
+            }
+
+            .score-value {
+                font-size: 2rem;
+            }
+
+            .score-label {
+                font-size: 0.9rem;
+            }
+
+            .gsc-card-title {
+                font-size: 0.75rem;
+            }
+
+            .gsc-badge {
+                font-size: 0.65rem;
+                padding: 0.2rem 0.5rem;
+            }
+
+            .gsc-card-value {
+                font-size: 1.5rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+            }
+
+            .metric-title {
+                font-size: 0.85rem;
+            }
+
+            .metric-value {
+                font-size: 1.1rem;
+            }
+
+            .issue-item {
+                font-size: 0.85rem;
+                padding: 0.6rem;
+            }
+
+            .seo-checklist li {
+                font-size: 0.85rem;
+                padding: 0.6rem;
+            }
+
+            .opportunity-title {
+                font-size: 0.9rem;
+            }
+
+            .opportunity-desc {
+                font-size: 0.8rem;
+            }
+
+            .keyword-suggestion-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .keyword-stats {
+                flex-direction: column;
+                gap: 0.25rem;
+            }
+
+            .brand-footer {
+                font-size: 0.65rem;
+                padding: 0.5rem;
+            }
+
+            .tooltip {
+                max-width: 250px;
+                font-size: 0.8rem;
+            }
+        }
+
+        /* Landscape mobile optimization */
+        @media (max-width: 768px) and (orientation: landscape) {
+            #editor {
+                min-height: 200px;
+            }
+
+            .score-card {
+                padding: 1rem;
+            }
+
+            .score-value {
+                font-size: 2rem;
+            }
+
+            .section-title {
+                margin: 1rem 0 0.5rem;
+            }
+        }
+
+        /* Touch-friendly adjustments */
+        @media (hover: none) and (pointer: coarse) {
+            .btn {
+                min-height: 44px;
+                padding: 0.75rem 1.5rem;
+            }
+
+            .tab {
+                min-height: 44px;
+            }
+
+            .check-icon {
+                width: 24px;
+                height: 24px;
+            }
+
+            .issue-item,
+            .seo-checklist li {
+                min-height: 44px;
+            }
+
+            .editor-toolbar input {
+                min-height: 44px;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div id="root"></div>
-  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-  <script>
-    const { createElement: e, useState, useEffect } = React;
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">
+                <div class="logo-icon">GM</div>
+                <div class="logo-text">
+                    <div class="logo-title">SEO Content Editor Pro</div>
+                    <div class="logo-subtitle">Powered by Genius Monkey</div>
+                </div>
+            </div>
+            <button class="mobile-menu-toggle" id="mobileMenuToggle">☰</button>
+            <div class="tabs">
+                <button class="tab active" data-tab="write">Write</button>
+                <button class="tab" data-tab="analyze">Analyze</button>
+                <button class="tab" data-tab="optimize">Optimize</button>
+            </div>
+            <div class="actions">
+                <div class="gsc-status disconnected" id="gscStatus">
+                    <span class="status-dot"></span>
+                    <span>GSC Disconnected</span>
+                </div>
+                <button class="btn btn-success" id="connectGSC">Connect GSC</button>
+                <button class="btn btn-secondary">Import</button>
+                <button class="btn btn-primary">Export</button>
+            </div>
+        </div>
 
-    function Icon({ name, className }) {
-      return e('i', { 'data-lucide': name, className });
-    }
+        <!-- Mobile Navigation -->
+        <div class="mobile-nav-overlay" id="mobileNavOverlay"></div>
+        <div class="mobile-nav" id="mobileNav">
+            <div class="mobile-nav-header">
+                <div class="logo">
+                    <div class="logo-icon">GM</div>
+                </div>
+                <button class="mobile-nav-close" id="mobileNavClose">✕</button>
+            </div>
+            <div class="tabs">
+                <button class="tab active" data-tab="write">Write</button>
+                <button class="tab" data-tab="analyze">Analyze</button>
+                <button class="tab" data-tab="optimize">Optimize</button>
+            </div>
+            <div class="actions">
+                <div class="gsc-status disconnected" id="gscStatusMobile">
+                    <span class="status-dot"></span>
+                    <span>GSC Disconnected</span>
+                </div>
+                <button class="btn btn-success" id="connectGSCMobile">Connect GSC</button>
+                <button class="btn btn-secondary">Import</button>
+                <button class="btn btn-primary">Export</button>
+            </div>
+        </div>
 
-    function SEOContentOptimizer() {
-      const [content, setContent] = useState('');
-      const [targetKeyword, setTargetKeyword] = useState('');
-      const [analysis, setAnalysis] = useState(null);
-      const [suggestions, setSuggestions] = useState([]);
-      const [selected, setSelected] = useState(new Set());
-      const [additions, setAdditions] = useState([]);
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Editor Section -->
+            <div class="editor-section">
+                <div class="editor-toolbar">
+                    <div class="toolbar-group">
+                        <label>Target URL:</label>
+                        <div class="url-input-group">
+                            <input type="text" id="targetUrl" placeholder="https://geniusmonkey.com/blog/programmatic-advertising">
+                            <button class="btn btn-primary" id="fetchGSCData">Fetch GSC Data</button>
+                        </div>
+                    </div>
+                    <div class="toolbar-group">
+                        <label>Primary Keyword:</label>
+                        <input type="text" id="primaryKeyword" placeholder="Enter your primary keyword">
+                    </div>
+                    <div class="toolbar-group">
+                        <label>Secondary Keywords:</label>
+                        <input type="text" id="secondaryKeywords" placeholder="keyword1, keyword2, keyword3">
+                    </div>
+                </div>
+                <div id="editor" contenteditable="true"></div>
+            </div>
 
-      useEffect(() => { lucide.createIcons(); }, [suggestions, additions, analysis]);
-      useEffect(() => {
-        if (content.length > 10) analyzeContent();
-        else { setAnalysis(null); setSuggestions([]); setAdditions([]); }
-      }, [content, targetKeyword]);
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <!-- Overall SEO Score -->
+                <div class="score-card">
+                    <div class="score-value" id="overallScore">0</div>
+                    <div class="score-label">SEO Score</div>
+                </div>
 
-      const countSyllables = (w) => {
-        w = w.toLowerCase().replace(/[^a-z]/g, '');
-        if (w.length <= 3) return 1;
-        w = w.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, '').replace(/^y/, '');
-        const s = w.match(/[aeiouy]{1,2}/g);
-        return s ? s.length : 1;
-      };
+                <!-- GSC Live Data -->
+                <div id="gscDataSection" style="display: none;">
+                    <div class="section-title">Live GSC Data</div>
+                    
+                    <div class="gsc-card">
+                        <div class="gsc-card-header">
+                            <span class="gsc-card-title">Current Position</span>
+                            <span class="gsc-badge">Last 28 Days</span>
+                        </div>
+                        <div class="gsc-card-value" id="gscPosition">#--</div>
+                        <div class="gsc-card-detail">
+                            <span class="gsc-trend" id="positionTrend"></span>
+                        </div>
+                    </div>
 
-      const analyzeContent = () => {
-        const words = content.trim().split(/\s+/).filter(w => w.length > 0);
-        const wc = words.length;
-        const sents = content.split(/[.!?]+/).filter(s => s.trim().length > 0);
-        const sc = sents.length;
-        const avg = sc > 0 ? wc / sc : 0;
-        const syl = words.reduce((a, w) => a + countSyllables(w), 0);
-        const gl = sc > 0 && wc > 0 ? 0.39 * (wc / sc) + 11.8 * (syl / wc) - 15.59 : 0;
-        const kc = targetKeyword ? content.toLowerCase().split(targetKeyword.toLowerCase()).length - 1 : 0;
-        const kd = wc > 0 && targetKeyword ? ((kc / wc) * 100).toFixed(2) : 0;
-        const h1 = (content.match(/^#\s/gm) || []).length;
-        const h2 = (content.match(/^##\s/gm) || []).length;
-        const h3 = (content.match(/^###\s/gm) || []).length;
-        const lc = (content.match(/\[([^\]]+)\]\(([^)]+)\)/g) || []).length;
+                    <div class="stats-grid" style="margin-bottom: 1rem;">
+                        <div class="stat-item">
+                            <div class="stat-value" id="gscClicks">--</div>
+                            <div class="stat-label">Clicks</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="gscImpressions">--</div>
+                            <div class="stat-label">Impressions</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="gscCTR">--%</div>
+                            <div class="stat-label">CTR</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="gscQueries">--</div>
+                            <div class="stat-label">Keywords</div>
+                        </div>
+                    </div>
 
-        let score = 0;
-        if (wc >= 300) score += 20; else if (wc >= 150) score += 10;
-        if (kd > 0.5 && kd < 3) score += 20; else if (kd > 0) score += 10;
-        if (gl >= 6 && gl <= 9) score += 20; else if (gl >= 5 && gl <= 11) score += 10;
-        if (h1 >= 1) score += 10; if (h2 >= 2) score += 10; if (lc >= 2) score += 10; if (avg < 25) score += 10;
+                    <!-- Opportunities -->
+                    <div class="section-title">Optimization Opportunities</div>
+                    <div id="opportunitiesSection"></div>
 
-        setAnalysis({ score, wc, sc, avg: avg.toFixed(1), gl: Math.max(1, Math.min(12, gl)).toFixed(1), kc, kd, h1, h2, h3, lc });
+                    <!-- Keyword Suggestions from GSC -->
+                    <div class="section-title">Keywords You're Ranking For</div>
+                    <div class="keyword-suggestions" id="keywordSuggestions"></div>
+                </div>
 
-        const sugs = [], adds = [];
-        if (wc < 300) {
-          sugs.push({ id: 'wc', t: 'w', title: 'Content Too Short', desc: `${wc} words. Aim for 300-500.`, why: 'Longer content ranks better.' });
-          if (targetKeyword) {
-            adds.push({ id: 'intro', title: 'Add Introduction', desc: 'Context about topic', sugg: `Have you wondered about ${targetKeyword}? Understanding ${targetKeyword} is essential.`, pos: 'beginning' });
-            adds.push({ id: 'benefits', title: 'Add Benefits', desc: 'Explain advantages', sugg: `## Benefits of ${targetKeyword}\n\n- Improve strategy\n- Increase results\n- Save resources`, pos: 'middle' });
-          }
+                <!-- Readability Score -->
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <span class="metric-title">Readability Grade</span>
+                        <span class="metric-value" id="readabilityGrade">0</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="readabilityProgress" style="width: 0%"></div>
+                    </div>
+                    <div class="metric-detail" id="readabilityDetail">Great! Easy to read</div>
+                </div>
+
+                <!-- Word Count -->
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <span class="metric-title">Word Count</span>
+                        <span class="metric-value" id="wordCount">0</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="wordProgress" style="width: 0%"></div>
+                    </div>
+                    <div class="metric-detail">Target: 1500-2500 words</div>
+                </div>
+
+                <!-- Keyword Density -->
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <span class="metric-title">Keyword Density</span>
+                        <span class="metric-value" id="keywordDensity">0%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="densityProgress" style="width: 0%"></div>
+                    </div>
+                    <div class="metric-detail">Optimal: 1-2%</div>
+                </div>
+
+                <!-- Reading Issues -->
+                <div class="section-title">Reading Issues</div>
+                <div class="issue-list">
+                    <div class="issue-item">
+                        <div class="issue-color" style="background: var(--hard-read)"></div>
+                        <span>Very hard to read</span>
+                        <span class="issue-count" id="hardSentences">0</span>
+                    </div>
+                    <div class="issue-item">
+                        <div class="issue-color" style="background: var(--warning)"></div>
+                        <span>Hard to read</span>
+                        <span class="issue-count" id="mediumSentences">0</span>
+                    </div>
+                    <div class="issue-item">
+                        <div class="issue-color" style="background: var(--passive)"></div>
+                        <span>Passive voice</span>
+                        <span class="issue-count" id="passiveCount">0</span>
+                    </div>
+                    <div class="issue-item">
+                        <div class="issue-color" style="background: var(--adverb)"></div>
+                        <span>Adverbs</span>
+                        <span class="issue-count" id="adverbCount">0</span>
+                    </div>
+                    <div class="issue-item">
+                        <div class="issue-color" style="background: var(--complex)"></div>
+                        <span>Complex words</span>
+                        <span class="issue-count" id="complexCount">0</span>
+                    </div>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value" id="sentenceCount">0</div>
+                        <div class="stat-label">Sentences</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="paragraphCount">0</div>
+                        <div class="stat-label">Paragraphs</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="avgSentenceLength">0</div>
+                        <div class="stat-label">Avg Sentence</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="readingTime">0m</div>
+                        <div class="stat-label">Reading Time</div>
+                    </div>
+                </div>
+
+                <!-- SEO Checklist -->
+                <div class="section-title">SEO Checklist</div>
+                <ul class="seo-checklist">
+                    <li>
+                        <div class="check-icon fail" id="check-keyword">✗</div>
+                        <span>Keyword in first 100 words</span>
+                    </li>
+                    <li>
+                        <div class="check-icon fail" id="check-length">✗</div>
+                        <span>Content length 1500+ words</span>
+                    </li>
+                    <li>
+                        <div class="check-icon fail" id="check-density">✗</div>
+                        <span>Keyword density 1-2%</span>
+                    </li>
+                    <li>
+                        <div class="check-icon fail" id="check-readability">✗</div>
+                        <span>Readability grade &lt; 10</span>
+                    </li>
+                    <li>
+                        <div class="check-icon fail" id="check-secondary">✗</div>
+                        <span>Secondary keywords used</span>
+                    </li>
+                    <li>
+                        <div class="check-icon fail" id="check-position">✗</div>
+                        <span>Ranking in top 10 (GSC)</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Brand Footer -->
+        <div class="brand-footer">
+            © 2025 Genius Monkey | <a href="https://geniusmonkey.com" target="_blank">geniusmonkey.com</a> | Programmatic Advertising Evolved
+        </div>
+    </div>
+
+    <!-- GSC Setup Modal -->
+    <div class="modal" id="gscModal">
+        <div class="modal-content">
+            <div class="modal-title">Connect Google Search Console</div>
+            <div class="modal-body">
+                <p style="margin-bottom: 1rem;">Enter your Google Search Console property URL to connect and fetch live ranking data.</p>
+                <label style="font-size: 0.9rem; font-weight: 600; display: block; margin-bottom: 0.5rem;">Property URL</label>
+                <input type="text" class="modal-input" id="gscPropertyUrl" placeholder="https://geniusmonkey.com/">
+                <p style="font-size: 0.85rem; color: var(--gm-gray);">Note: In production, this would use OAuth 2.0 authentication. For now, we'll simulate the connection.</p>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" id="cancelGSC">Cancel</button>
+                <button class="btn btn-success" id="confirmGSC">Connect</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tooltip -->
+    <div class="tooltip" id="tooltip"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script>
+        // [Same JavaScript code from previous version - keeping all the analysis logic]
+        // Database of adverbs, passive voice indicators, and complex words
+        const adverbs = [
+            'very', 'really', 'quite', 'extremely', 'incredibly', 'absolutely', 
+            'completely', 'totally', 'basically', 'literally', 'actually', 'seriously',
+            'definitely', 'certainly', 'obviously', 'clearly', 'simply', 'just',
+            'particularly', 'especially', 'significantly', 'substantially'
+        ];
+
+        const passiveIndicators = [
+            'was', 'were', 'been', 'being', 'is', 'are', 'am',
+            'be', 'has been', 'have been', 'had been', 'will be'
+        ];
+
+        const complexWords = {
+            'utilize': 'use',
+            'facilitate': 'help',
+            'implement': 'start',
+            'demonstrate': 'show',
+            'approximately': 'about',
+            'commence': 'start',
+            'endeavor': 'try',
+            'terminate': 'end',
+            'acquire': 'get',
+            'additional': 'more',
+            'assist': 'help',
+            'consequently': 'so',
+            'initiate': 'start',
+            'maintain': 'keep',
+            'modify': 'change',
+            'numerous': 'many',
+            'obtain': 'get',
+            'purchase': 'buy',
+            'require': 'need',
+            'sufficient': 'enough'
+        };
+
+        // State
+        let primaryKeyword = '';
+        let secondaryKeywords = [];
+        let currentText = '';
+        let gscConnected = false;
+        let gscData = null;
+        let currentUrl = '';
+
+        // Initialize
+        const editor = document.getElementById('editor');
+        const tooltip = document.getElementById('tooltip');
+        const gscModal = document.getElementById('gscModal');
+        
+        // Mobile menu functionality
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const mobileNav = document.getElementById('mobileNav');
+        const mobileNavOverlay = document.getElementById('mobileNavOverlay');
+        const mobileNavClose = document.getElementById('mobileNavClose');
+
+        function openMobileMenu() {
+            mobileNav.classList.add('active');
+            mobileNavOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
         }
-        if (targetKeyword && kd < 0.5) sugs.push({ id: 'kd-low', t: 'w', title: 'Keyword Underused', desc: `"${targetKeyword}" appears ${kc} times (${kd}%). Aim for 1-2%.`, why: 'Keywords help search engines understand topics.' });
-        if (targetKeyword && kd > 3) sugs.push({ id: 'stuff', t: 'e', title: 'Keyword Stuffing', desc: `${kd}% is too high.`, why: 'Overuse appears spammy.' });
-        if (h1 === 0) sugs.push({ id: 'h1', t: 'e', title: 'Missing H1', desc: 'Add main heading with #', why: 'H1 tells search engines your topic.', act: 'h1' });
-        if (h1 > 1) sugs.push({ id: 'multi-h1', t: 'w', title: 'Multiple H1s', desc: `${h1} H1s. Use one.`, why: 'Multiple H1s confuse search engines.' });
-        if (h2 < 2) sugs.push({ id: 'h2', t: 'i', title: 'Add Subheadings', desc: 'Include 2-3 H2s', why: 'Improves structure and readability.' });
-        if (lc < 2) sugs.push({ id: 'links', t: 'i', title: 'Add Links', desc: 'Internal and external links', why: 'Shows well-researched content.' });
-        if (gl > 10) sugs.push({ id: 'read', t: 'w', title: 'Improve Readability', desc: `Grade ${Math.min(12, gl).toFixed(1)}. Aim 6-9.`, why: 'Easier content keeps visitors engaged.' });
-        if (avg > 25) {
-          sugs.push({ id: 'sent', t: 'i', title: 'Shorten Sentences', desc: `Avg ${avg.toFixed(0)} words. Aim under 20.`, why: 'Shorter sentences are clearer.' });
-          sents.filter(s => s.split(/\s+/).length > 25).slice(0, 2).forEach((s, i) => {
-            const ws = s.trim().split(/\s+/), mid = Math.floor(ws.length / 2);
-            adds.push({ id: `rewrite-${i}`, title: `Simplify Sentence ${i + 1}`, desc: 'Break into shorter sentences', sugg: ws.slice(0, mid).join(' ') + '. ' + ws.slice(mid).join(' ') + '.', orig: s.trim(), pos: 'replace' });
-          });
+
+        function closeMobileMenu() {
+            mobileNav.classList.remove('active');
+            mobileNavOverlay.classList.remove('active');
+            document.body.style.overflow = '';
         }
-        if (targetKeyword) sugs.push({ id: 'vars', t: 's', title: 'Use Variations', desc: `Try "${targetKeyword}s", "best ${targetKeyword}"`, why: 'Variations help rank for related searches.' });
 
-        setSuggestions(sugs); setAdditions(adds);
-      };
+        mobileMenuToggle.addEventListener('click', openMobileMenu);
+        mobileNavClose.addEventListener('click', closeMobileMenu);
+        mobileNavOverlay.addEventListener('click', closeMobileMenu);
 
-      const toggle = (id) => { const n = new Set(selected); n.has(id) ? n.delete(id) : n.add(id); setSelected(n); };
-      const addThis = (a) => {
-        let c = content;
-        if (a.pos === 'beginning') c = a.sugg + '\n\n' + c;
-        else if (a.pos === 'end') c += '\n\n' + a.sugg;
-        else if (a.pos === 'middle') { const p = c.split('\n\n'), m = Math.floor(p.length / 2); p.splice(m, 0, a.sugg); c = p.join('\n\n'); }
-        else if (a.pos === 'replace' && a.orig) c = c.replace(a.orig, a.sugg);
-        setContent(c);
-      };
-      const applySel = () => {
-        let c = content;
-        suggestions.filter(s => selected.has(s.id)).forEach(s => { if (s.act === 'h1' && !c.match(/^#\s/m)) c = `# ${targetKeyword || 'Title'}\n\n${c}`; });
-        setContent(c); setSelected(new Set());
-      };
-      const applyAll = () => {
-        let c = content; if (!c.match(/^#\s/m)) c = `# ${targetKeyword || 'Title'}\n\n${c}`;
-        setContent(c); setSelected(new Set());
-      };
+        // Sync mobile and desktop GSC status
+        function updateGSCStatus(connected) {
+            const statusElements = [
+                document.getElementById('gscStatus'),
+                document.getElementById('gscStatusMobile')
+            ];
+            
+            statusElements.forEach(el => {
+                if (connected) {
+                    el.className = 'gsc-status connected';
+                    el.innerHTML = '<span class="status-dot"></span><span>GSC Connected</span>';
+                } else {
+                    el.className = 'gsc-status disconnected';
+                    el.innerHTML = '<span class="status-dot"></span><span>GSC Disconnected</span>';
+                }
+            });
+        }
 
-      const iconMap = { e: 'alert-circle', w: 'alert-circle', i: 'lightbulb', s: 'check-circle' };
-      const colorMap = { e: 'text-red-500', w: 'text-orange-500', i: 'text-blue-500', s: 'text-green-500' };
+        // Event Listeners
+        document.getElementById('connectGSC').addEventListener('click', () => {
+            gscModal.classList.add('show');
+        });
 
-      return e('div', { className: 'min-h-screen bg-white' },
-        e('div', { className: 'bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 shadow-lg' },
-          e('div', { className: 'max-w-7xl mx-auto px-6 py-6' },
-            e('div', { className: 'flex items-center justify-between flex-wrap gap-4' },
-              e('div', { className: 'flex items-center gap-4' },
-                e('div', { className: 'w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center shadow-lg' },
-                  e(Icon, { name: 'sparkles', className: 'w-7 h-7 text-white' })
-                ),
-                e('div', null,
-                  e('h1', { className: 'text-3xl font-bold text-white' }, 'SEO Content Optimizer'),
-                  e('p', { className: 'text-orange-400 font-medium' }, 'Powered by Smart Analytics')
-                )
-              ),
-              e('div', { className: 'flex items-center gap-2 bg-orange-500 px-6 py-3 rounded-lg shadow-lg' },
-                e(Icon, { name: 'trending-up', className: 'w-5 h-5 text-white' }),
-                e('span', { className: 'text-white font-bold' }, 'Optimize Content')
-              )
-            )
-          )
-        ),
-        e('div', { className: 'max-w-7xl mx-auto px-6 py-8' },
-          e('div', { className: 'bg-white rounded-xl shadow-lg border-2 border-gray-200 p-6 mb-6' },
-            e('label', { className: 'block text-sm font-bold text-gray-800 mb-3 uppercase tracking-wide' }, 'Target Keyword'),
-            e('div', { className: 'relative' },
-              e(Icon, { name: 'search', className: 'absolute left-4 top-3.5 w-5 h-5 text-orange-500' }),
-              e('input', { type: 'text', value: targetKeyword, onChange: (ev) => setTargetKeyword(ev.target.value), placeholder: 'e.g., content marketing', className: 'w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 text-lg' })
-            )
-          ),
-          e('div', { className: 'grid grid-cols-1 lg:grid-cols-3 gap-6' },
-            e('div', { className: 'lg:col-span-2' },
-              e('div', { className: 'bg-white rounded-xl shadow-lg border-2 border-gray-200 p-6' },
-                e('div', { className: 'flex items-center justify-between mb-4' },
-                  e('h2', { className: 'text-xl font-bold text-gray-900 uppercase tracking-wide' }, 'Content Editor'),
-                  e('div', { className: 'flex items-center gap-2 bg-orange-100 px-4 py-2 rounded-lg' },
-                    e(Icon, { name: 'file-text', className: 'w-4 h-4 text-orange-600' }),
-                    e('span', { className: 'text-sm font-bold text-orange-600' }, `${content.split(/\s+/).filter(w => w.length > 0).length} words`)
-                  )
-                ),
-                e('textarea', { value: content, onChange: (ev) => setContent(ev.target.value), placeholder: 'Paste content...\n\n# Title\n## Section\n[link](url)', className: 'w-full h-96 p-4 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 resize-none font-mono text-sm' })
-              )
-            ),
-            e('div', { className: 'space-y-6' },
-              analysis && e('div', { className: 'bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl shadow-lg p-6' },
-                e('h3', { className: 'text-lg font-bold text-white mb-4 uppercase tracking-wide' }, 'SEO Score'),
-                e('div', { className: 'flex justify-center mb-4' },
-                  e('div', { className: 'relative w-32 h-32' },
-                    e('svg', { className: 'transform -rotate-90 w-32 h-32' },
-                      e('circle', { cx: 64, cy: 64, r: 56, stroke: '#374151', strokeWidth: 8, fill: 'none' }),
-                      e('circle', { cx: 64, cy: 64, r: 56, stroke: '#f97316', strokeWidth: 8, fill: 'none', strokeDasharray: `${analysis.score * 3.51} 351`, style: { transition: 'all 0.5s' } })
-                    ),
-                    e('div', { className: 'absolute inset-0 flex items-center justify-center' },
-                      e('span', { className: 'text-4xl font-bold text-orange-500' }, analysis.score)
-                    )
-                  )
-                ),
-                e('p', { className: 'text-center text-sm text-gray-300 font-semibold' },
-                  analysis.score >= 80 ? '🎉 Excellent!' : analysis.score >= 60 ? '👍 Good' : '⚠️ Needs Work'
-                )
-              ),
-              analysis && e('div', { className: 'bg-white rounded-xl shadow-lg border-2 border-gray-200 p-6' },
-                e('h3', { className: 'text-lg font-bold text-gray-900 mb-4 uppercase tracking-wide' }, 'Metrics'),
-                e('div', { className: 'space-y-4' },
-                  [
-                    ['file-text', 'Word Count', analysis.wc],
-                    ['eye', 'Reading Level', `Grade ${analysis.gl}`],
-                    targetKeyword && ['hash', 'Keyword Density', `${analysis.kd}%`, true],
-                    ['bar-chart-3', 'Headers', `H1:${analysis.h1} H2:${analysis.h2} H3:${analysis.h3}`],
-                    ['link', 'Links', analysis.lc]
-                  ].filter(Boolean).map(([icon, label, val, orange]) =>
-                    e('div', { key: label, className: `flex justify-between p-3 rounded-lg ${orange ? 'bg-orange-50 border border-orange-200' : 'bg-gray-50'}` },
-                      e('span', { className: `text-sm font-semibold flex items-center gap-2 ${orange ? 'text-orange-700' : 'text-gray-700'}` },
-                        e(Icon, { name: icon, className: `w-5 h-5 text-orange-500` }),
-                        label
-                      ),
-                      e('span', { className: `font-bold ${orange ? 'text-orange-600' : 'text-gray-900'} text-lg` }, val)
-                    )
-                  )
-                )
-              )
-            )
-          ),
-          suggestions.length > 0 && e('div', { className: 'mt-6 bg-white rounded-xl shadow-lg border-2 border-gray-200 p-6' },
-            e('div', { className: 'flex items-center justify-between mb-6 flex-wrap gap-4' },
-              e('h3', { className: 'text-xl font-bold text-gray-900 uppercase tracking-wide' }, 'Recommendations'),
-              e('div', { className: 'flex gap-3' },
-                selected.size > 0 && e('button', { onClick: applySel, className: 'px-5 py-3 bg-gray-800 text-white rounded-lg hover:bg-gray-700 text-sm font-bold shadow-lg uppercase' }, `Apply (${selected.size})`),
-                e('button', { onClick: applyAll, className: 'px-5 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg hover:from-orange-600 hover:to-orange-700 text-sm font-bold shadow-lg uppercase' }, 'Apply All')
-              )
-            ),
-            e('div', { className: 'space-y-4' },
-              suggestions.map(s =>
-                e('div', { key: s.id, className: 'border-2 border-gray-200 rounded-lg p-5 hover:shadow-lg hover:border-orange-300 transition-all' },
-                  e('div', { className: 'flex items-start gap-4' },
-                    e('input', { type: 'checkbox', checked: selected.has(s.id), onChange: () => toggle(s.id), className: 'mt-1 w-5 h-5 text-orange-600 rounded' }),
-                    e('div', { className: 'flex-1' },
-                      e('div', { className: 'flex items-start gap-3 mb-3' },
-                        e(Icon, { name: iconMap[s.t], className: `w-6 h-6 ${colorMap[s.t]} flex-shrink-0 mt-0.5` }),
-                        e('div', null,
-                          e('h4', { className: 'font-bold text-gray-900 text-lg' }, s.title),
-                          e('p', { className: 'text-sm text-gray-600 mt-1' }, s.desc)
-                        )
-                      ),
-                      e('div', { className: 'bg-orange-50 border-l-4 border-orange-500 p-4 rounded' },
-                        e('p', { className: 'text-sm text-gray-800' },
-                          e('span', { className: 'font-bold text-orange-600' }, 'Why: '), s.why
-                        )
-                      )
-                    )
-                  )
-                )
-              )
-            )
-          ),
-          additions.length > 0 && e('div', { className: 'mt-6 bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl shadow-lg border-2 border-orange-200 p-6' },
-            e('div', { className: 'flex items-center gap-3 mb-6' },
-              e('div', { className: 'w-10 h-10 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center shadow-lg' },
-                e(Icon, { name: 'lightbulb', className: 'w-6 h-6 text-white' })
-              ),
-              e('h3', { className: 'text-xl font-bold text-gray-900 uppercase tracking-wide' }, 'Expansion Ideas')
-            ),
-            e('div', { className: 'space-y-4' },
-              additions.map(a =>
-                e('div', { key: a.id, className: 'bg-white border-2 border-orange-200 rounded-lg p-5 hover:shadow-lg transition-shadow' },
-                  e('div', { className: 'flex items-start justify-between gap-4 mb-4 flex-wrap' },
-                    e('div', null,
-                      e('h4', { className: 'font-bold text-gray-900 mb-2 text-lg' }, a.title),
-                      e('p', { className: 'text-sm text-gray-600' }, a.desc)
-                    ),
-                    e('button', { onClick: () => addThis(a), className: 'px-5 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg hover:from-orange-600 hover:to-orange-700 text-sm font-bold whitespace-nowrap shadow-lg uppercase' }, 'Add This')
-                  ),
-                  e('div', { className: 'bg-gray-50 rounded-lg p-4 border-2 border-gray-200' },
-                    e('p', { className: 'text-xs font-bold text-gray-500 uppercase mb-2' }, 'Preview:'),
-                    e('pre', { className: 'text-sm text-gray-700 whitespace-pre-wrap font-sans' }, a.sugg)
-                  ),
-                  a.orig && e('div', { className: 'mt-3 bg-red-50 rounded-lg p-4 border-2 border-red-200' },
-                    e('p', { className: 'text-xs font-bold text-red-700 uppercase mb-2' }, 'Replaces:'),
-                    e('p', { className: 'text-sm text-red-800' }, a.orig)
-                  )
-                )
-              )
-            )
-          )
-        )
-      );
-    }
+        document.getElementById('connectGSCMobile').addEventListener('click', () => {
+            closeMobileMenu();
+            gscModal.classList.add('show');
+        });
 
-    ReactDOM.createRoot(document.getElementById('root')).render(e(SEOContentOptimizer));
-  </script>
+        document.getElementById('cancelGSC').addEventListener('click', () => {
+            gscModal.classList.remove('show');
+        });
+
+        document.getElementById('confirmGSC').addEventListener('click', () => {
+            const propertyUrl = document.getElementById('gscPropertyUrl').value;
+            if (propertyUrl) {
+                connectGSC(propertyUrl);
+                gscModal.classList.remove('show');
+            }
+        });
+
+        document.getElementById('fetchGSCData').addEventListener('click', () => {
+            const url = document.getElementById('targetUrl').value;
+            if (url && gscConnected) {
+                fetchGSCDataForUrl(url);
+            } else if (!gscConnected) {
+                alert('Please connect to Google Search Console first');
+            } else {
+                alert('Please enter a URL');
+            }
+        });
+
+        document.getElementById('primaryKeyword').addEventListener('input', (e) => {
+            primaryKeyword = e.target.value.toLowerCase().trim();
+            analyzeContent();
+        });
+
+        document.getElementById('secondaryKeywords').addEventListener('input', (e) => {
+            secondaryKeywords = e.target.value.toLowerCase().split(',').map(k => k.trim()).filter(k => k);
+            analyzeContent();
+        });
+
+        editor.addEventListener('input', debounce(() => {
+            currentText = editor.innerText;
+            analyzeContent();
+        }, 300));
+
+        // GSC Connection (Simulated for demo)
+        function connectGSC(propertyUrl) {
+            gscConnected = true;
+            updateGSCStatus(true);
+            
+            const connectButtons = [
+                document.getElementById('connectGSC'),
+                document.getElementById('connectGSCMobile')
+            ];
+            
+            connectButtons.forEach(btn => {
+                btn.textContent = 'Disconnect GSC';
+                btn.classList.remove('btn-success');
+                btn.classList.add('btn-secondary');
+            });
+            
+            alert('Successfully connected to Google Search Console!\n\nYou can now fetch live ranking data for any URL.');
+        }
+
+        // Fetch GSC Data (Simulated)
+        async function fetchGSCDataForUrl(url) {
+            currentUrl = url;
+            
+            document.getElementById('fetchGSCData').innerHTML = '<span class="loading"></span>';
+            
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            
+            gscData = generateSimulatedGSCData();
+            displayGSCData(gscData);
+            
+            document.getElementById('fetchGSCData').textContent = 'Refresh Data';
+            document.getElementById('gscDataSection').style.display = 'block';
+            
+            analyzeContent();
+        }
+
+        function generateSimulatedGSCData() {
+            const position = Math.floor(Math.random() * 20) + 1;
+            const clicks = position <= 3 ? Math.floor(Math.random() * 500) + 200 : 
+                          position <= 10 ? Math.floor(Math.random() * 100) + 50 :
+                          Math.floor(Math.random() * 30) + 5;
+            const impressions = clicks * (position <= 5 ? 15 : position <= 10 ? 25 : 50);
+            const ctr = ((clicks / impressions) * 100).toFixed(2);
+            
+            return {
+                position: position,
+                clicks: clicks,
+                impressions: impressions,
+                ctr: ctr,
+                queries: [
+                    { query: 'programmatic advertising', position: position, clicks: Math.floor(clicks * 0.4), impressions: Math.floor(impressions * 0.3), ctr: 2.5 },
+                    { query: 'what is programmatic advertising', position: position + 2, clicks: Math.floor(clicks * 0.25), impressions: Math.floor(impressions * 0.25), ctr: 1.8 },
+                    { query: 'programmatic ad platforms', position: position + 5, clicks: Math.floor(clicks * 0.15), impressions: Math.floor(impressions * 0.2), ctr: 1.2 },
+                    { query: 'programmatic advertising examples', position: position + 8, clicks: Math.floor(clicks * 0.12), impressions: Math.floor(impressions * 0.15), ctr: 1.5 },
+                    { query: 'how does programmatic advertising work', position: position + 10, clicks: Math.floor(clicks * 0.08), impressions: Math.floor(impressions * 0.1), ctr: 0.9 }
+                ]
+            };
+        }
+
+        function displayGSCData(data) {
+            document.getElementById('gscPosition').textContent = `#${data.position}`;
+            
+            const positionTrendEl = document.getElementById('positionTrend');
+            if (data.position <= 3) {
+                positionTrendEl.textContent = '🔥 Top 3 ranking';
+            } else if (data.position <= 10) {
+                positionTrendEl.textContent = '✓ First page';
+            } else {
+                positionTrendEl.textContent = '⚠ Page 2+';
+            }
+            
+            document.getElementById('gscClicks').textContent = data.clicks.toLocaleString();
+            document.getElementById('gscImpressions').textContent = data.impressions.toLocaleString();
+            document.getElementById('gscCTR').textContent = data.ctr + '%';
+            document.getElementById('gscQueries').textContent = data.queries.length;
+            
+            displayOpportunities(data);
+            displayKeywordSuggestions(data.queries);
+        }
+
+        function displayOpportunities(data) {
+            const opportunitiesSection = document.getElementById('opportunitiesSection');
+            let opportunitiesHTML = '';
+            
+            if (data.position > 10) {
+                const potentialClicks = Math.floor(data.impressions * 0.05);
+                opportunitiesHTML += `
+                    <div class="opportunity-card">
+                        <div class="opportunity-title">
+                            📈 Major Opportunity: Move to Page 1
+                        </div>
+                        <div class="opportunity-desc">
+                            You're currently on page 2 (#${data.position}). Optimizing this content to reach the first page could increase your monthly clicks from <span class="opportunity-metric">${data.clicks}</span> to <span class="opportunity-metric">~${potentialClicks}</span> (${Math.round((potentialClicks - data.clicks) / data.clicks * 100)}% increase).
+                        </div>
+                    </div>
+                `;
+            } else if (data.position > 5) {
+                const potentialClicks = Math.floor(data.clicks * 2.5);
+                opportunitiesHTML += `
+                    <div class="opportunity-card">
+                        <div class="opportunity-title">
+                            🎯 Good Opportunity: Reach Top 5
+                        </div>
+                        <div class="opportunity-desc">
+                            You're in position #${data.position}. Moving to top 5 positions could increase clicks from <span class="opportunity-metric">${data.clicks}</span> to <span class="opportunity-metric">~${potentialClicks}</span>.
+                        </div>
+                    </div>
+                `;
+            } else if (data.position > 3) {
+                opportunitiesHTML += `
+                    <div class="opportunity-card">
+                        <div class="opportunity-title">
+                            🏆 Push for Top 3
+                        </div>
+                        <div class="opportunity-desc">
+                            You're close! Position #${data.position} is solid, but top 3 positions get 3x more clicks.
+                        </div>
+                    </div>
+                `;
+            }
+            
+            if (parseFloat(data.ctr) < 2.0 && data.position <= 10) {
+                opportunitiesHTML += `
+                    <div class="opportunity-card">
+                        <div class="opportunity-title">
+                            💡 Improve Your CTR
+                        </div>
+                        <div class="opportunity-desc">
+                            Your CTR is <span class="opportunity-metric">${data.ctr}%</span>, which is below average for position #${data.position}. Optimize your title tag and meta description.
+                        </div>
+                    </div>
+                `;
+            }
+            
+            if (!opportunitiesHTML) {
+                opportunitiesHTML = `
+                    <div class="opportunity-card" style="border-left-color: var(--success);">
+                        <div class="opportunity-title">
+                            ✅ Strong Performance
+                        </div>
+                        <div class="opportunity-desc">
+                            You're ranking well for this keyword! Focus on maintaining your position and expanding to related keywords.
+                        </div>
+                    </div>
+                `;
+            }
+            
+            opportunitiesSection.innerHTML = opportunitiesHTML;
+        }
+
+        function displayKeywordSuggestions(queries) {
+            const suggestionsSection = document.getElementById('keywordSuggestions');
+            let html = '';
+            
+            queries.slice(0, 5).forEach(query => {
+                html += `
+                    <div class="keyword-suggestion-item">
+                        <div class="keyword-suggestion-header">
+                            <span class="keyword-text">${query.query}</span>
+                            <span class="keyword-position">#${query.position}</span>
+                        </div>
+                        <div class="keyword-stats">
+                            <span class="keyword-stat">👁️ ${query.impressions.toLocaleString()} impressions</span>
+                            <span class="keyword-stat">🖱️ ${query.clicks} clicks</span>
+                            <span class="keyword-stat">📊 ${query.ctr}% CTR</span>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            suggestionsSection.innerHTML = html;
+        }
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        function fleschReadingEase(text) {
+            const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0);
+            const words = text.split(/\s+/).filter(w => w.length > 0);
+            const syllables = words.reduce((sum, word) => sum + countSyllables(word), 0);
+
+            if (sentences.length === 0 || words.length === 0) return 100;
+
+            const avgWordsPerSentence = words.length / sentences.length;
+            const avgSyllablesPerWord = syllables / words.length;
+
+            return 206.835 - (1.015 * avgWordsPerSentence) - (84.6 * avgSyllablesPerWord);
+        }
+
+        function countSyllables(word) {
+            word = word.toLowerCase().replace(/[^a-z]/g, '');
+            if (word.length <= 3) return 1;
+            
+            const vowels = 'aeiouy';
+            let count = 0;
+            let previousWasVowel = false;
+            
+            for (let i = 0; i < word.length; i++) {
+                const isVowel = vowels.includes(word[i]);
+                if (isVowel && !previousWasVowel) {
+                    count++;
+                }
+                previousWasVowel = isVowel;
+            }
+            
+            if (word.endsWith('e')) count--;
+            if (word.endsWith('le') && word.length > 2 && !'aeiouy'.includes(word[word.length - 3])) count++;
+            
+            return Math.max(1, count);
+        }
+
+        function readingEaseToGrade(score) {
+            if (score >= 90) return 5;
+            if (score >= 80) return 6;
+            if (score >= 70) return 7;
+            if (score >= 60) return 8;
+            if (score >= 50) return 9;
+            if (score >= 40) return 10;
+            if (score >= 30) return 11;
+            return 12;
+        }
+
+        function analyzeSentenceDifficulty(sentence) {
+            const words = sentence.split(/\s+/).filter(w => w.length > 0);
+            const wordCount = words.length;
+            
+            if (wordCount > 25) return 'hard';
+            if (wordCount > 20) return 'medium';
+            return 'easy';
+        }
+
+        function hasPassiveVoice(sentence) {
+            const lowerSentence = sentence.toLowerCase();
+            return passiveIndicators.some(indicator => {
+                const regex = new RegExp(`\\b${indicator}\\b\\s+\\w+ed\\b`, 'i');
+                return regex.test(lowerSentence);
+            });
+        }
+
+        function analyzeContent() {
+            const text = editor.innerText;
+            
+            if (!text.trim()) {
+                resetMetrics();
+                return;
+            }
+
+            const words = text.split(/\s+/).filter(w => w.length > 0);
+            const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0);
+            const paragraphs = text.split(/\n\n+/).filter(p => p.trim().length > 0);
+            
+            const wordCount = words.length;
+            const sentenceCount = sentences.length;
+            const paragraphCount = paragraphs.length;
+            const avgSentenceLength = sentenceCount > 0 ? Math.round(wordCount / sentenceCount) : 0;
+            const readingTime = Math.ceil(wordCount / 200);
+
+            document.getElementById('wordCount').textContent = wordCount;
+            document.getElementById('sentenceCount').textContent = sentenceCount;
+            document.getElementById('paragraphCount').textContent = paragraphCount;
+            document.getElementById('avgSentenceLength').textContent = avgSentenceLength;
+            document.getElementById('readingTime').textContent = readingTime + 'm';
+
+            const wordProgress = Math.min((wordCount / 2000) * 100, 100);
+            document.getElementById('wordProgress').style.width = wordProgress + '%';
+
+            const readingEase = fleschReadingEase(text);
+            const grade = readingEaseToGrade(readingEase);
+            document.getElementById('readabilityGrade').textContent = grade;
+            
+            const readabilityProgress = Math.max(0, 100 - (grade * 8));
+            document.getElementById('readabilityProgress').style.width = readabilityProgress + '%';
+            
+            let readabilityDetail = '';
+            if (grade <= 6) readabilityDetail = 'Excellent! Very easy to read';
+            else if (grade <= 8) readabilityDetail = 'Good! Easy to understand';
+            else if (grade <= 10) readabilityDetail = 'Decent, but could be simpler';
+            else readabilityDetail = 'Complex. Consider simplifying';
+            document.getElementById('readabilityDetail').textContent = readabilityDetail;
+
+            let keywordCount = 0;
+            
+            if (primaryKeyword) {
+                const regex = new RegExp(`\\b${primaryKeyword}\\b`, 'gi');
+                const matches = text.match(regex);
+                keywordCount = matches ? matches.length : 0;
+            }
+
+            const keywordDensity = wordCount > 0 ? ((keywordCount / wordCount) * 100).toFixed(2) : 0;
+            document.getElementById('keywordDensity').textContent = keywordDensity + '%';
+            
+            const densityProgress = Math.min((keywordDensity / 2) * 100, 100);
+            document.getElementById('densityProgress').style.width = densityProgress + '%';
+
+            let hardSentences = 0;
+            let mediumSentences = 0;
+            let passiveCount = 0;
+            let adverbCount = 0;
+            let complexCount = 0;
+
+            sentences.forEach(sentence => {
+                const difficulty = analyzeSentenceDifficulty(sentence);
+                if (difficulty === 'hard') hardSentences++;
+                else if (difficulty === 'medium') mediumSentences++;
+                
+                if (hasPassiveVoice(sentence)) passiveCount++;
+            });
+
+            words.forEach(word => {
+                const cleanWord = word.toLowerCase().replace(/[^a-z]/g, '');
+                if (adverbs.includes(cleanWord)) adverbCount++;
+                if (complexWords[cleanWord]) complexCount++;
+            });
+
+            document.getElementById('hardSentences').textContent = hardSentences;
+            document.getElementById('mediumSentences').textContent = mediumSentences;
+            document.getElementById('passiveCount').textContent = passiveCount;
+            document.getElementById('adverbCount').textContent = adverbCount;
+            document.getElementById('complexCount').textContent = complexCount;
+
+            updateChecklistItem('check-keyword', keywordCount > 0 && text.split(' ').slice(0, 100).join(' ').toLowerCase().includes(primaryKeyword));
+            updateChecklistItem('check-length', wordCount >= 1500);
+            updateChecklistItem('check-density', keywordDensity >= 1 && keywordDensity <= 2);
+            updateChecklistItem('check-readability', grade < 10);
+            updateChecklistItem('check-secondary', secondaryKeywords.length > 0 && secondaryKeywords.some(kw => text.toLowerCase().includes(kw)));
+            
+            if (gscData) {
+                updateChecklistItem('check-position', gscData.position <= 10);
+            }
+
+            let seoScore = 0;
+            if (wordCount >= 1500) seoScore += 15;
+            if (grade < 10) seoScore += 15;
+            if (keywordDensity >= 1 && keywordDensity <= 2) seoScore += 15;
+            if (keywordCount > 0) seoScore += 15;
+            if (hardSentences < sentenceCount * 0.1) seoScore += 10;
+            if (passiveCount < sentenceCount * 0.1) seoScore += 10;
+            if (gscData && gscData.position <= 10) seoScore += 10;
+            if (gscData && gscData.position <= 3) seoScore += 10;
+
+            document.getElementById('overallScore').textContent = seoScore;
+
+            highlightContent();
+        }
+
+        function updateChecklistItem(id, passed) {
+            const element = document.getElementById(id);
+            element.className = 'check-icon ' + (passed ? 'pass' : 'fail');
+            element.textContent = passed ? '✓' : '✗';
+        }
+
+        function highlightContent() {
+            const text = editor.innerText;
+            const sentences = text.split(/([.!?]+)/);
+            
+            let html = '';
+
+            sentences.forEach((segment, index) => {
+                if (index % 2 === 0 && segment.trim()) {
+                    const difficulty = analyzeSentenceDifficulty(segment);
+                    const hasPassive = hasPassiveVoice(segment);
+                    
+                    let sentenceClass = '';
+                    let tooltip = '';
+                    
+                    if (difficulty === 'hard') {
+                        sentenceClass = 'hard-sentence';
+                        tooltip = 'Very hard to read. Consider breaking into shorter sentences.';
+                    } else if (difficulty === 'medium') {
+                        sentenceClass = 'medium-sentence';
+                        tooltip = 'Hard to read. Try shortening or simplifying.';
+                    }
+                    
+                    if (hasPassive) {
+                        sentenceClass = 'passive-voice';
+                        tooltip = 'Contains passive voice. Consider using active voice.';
+                    }
+
+                    let highlightedSegment = segment;
+                    
+                    adverbs.forEach(adverb => {
+                        const regex = new RegExp(`\\b(${adverb})\\b`, 'gi');
+                        highlightedSegment = highlightedSegment.replace(regex, '<span class="adverb" data-tooltip="Weak adverb. Consider removing or replacing.">$1</span>');
+                    });
+                    
+                    Object.keys(complexWords).forEach(complex => {
+                        const regex = new RegExp(`\\b(${complex})\\b`, 'gi');
+                        highlightedSegment = highlightedSegment.replace(regex, `<span class="complex-word" data-tooltip="Consider simpler alternative: '${complexWords[complex]}'">$1</span>`);
+                    });
+                    
+                    if (primaryKeyword) {
+                        const regex = new RegExp(`\\b(${primaryKeyword})\\b`, 'gi');
+                        highlightedSegment = highlightedSegment.replace(regex, '<span class="keyword-primary">$1</span>');
+                    }
+                    
+                    secondaryKeywords.forEach(keyword => {
+                        if (keyword) {
+                            const regex = new RegExp(`\\b(${keyword})\\b`, 'gi');
+                            highlightedSegment = highlightedSegment.replace(regex, '<span class="keyword-secondary">$1</span>');
+                        }
+                    });
+
+                    if (sentenceClass) {
+                        html += `<span class="${sentenceClass}" data-tooltip="${tooltip}">${highlightedSegment}</span>`;
+                    } else {
+                        html += highlightedSegment;
+                    }
+                } else {
+                    html += segment;
+                }
+            });
+
+            editor.innerHTML = html;
+
+            document.querySelectorAll('[data-tooltip]').forEach(el => {
+                el.addEventListener('mouseenter', showTooltip);
+                el.addEventListener('mouseleave', hideTooltip);
+            });
+        }
+
+        function showTooltip(e) {
+            const tooltipText = e.target.getAttribute('data-tooltip');
+            tooltip.textContent = tooltipText;
+            tooltip.classList.add('show');
+            
+            const rect = e.target.getBoundingClientRect();
+            tooltip.style.left = rect.left + 'px';
+            tooltip.style.top = (rect.bottom + 5) + 'px';
+        }
+
+        function hideTooltip() {
+            tooltip.classList.remove('show');
+        }
+
+        function resetMetrics() {
+            document.getElementById('wordCount').textContent = '0';
+            document.getElementById('sentenceCount').textContent = '0';
+            document.getElementById('paragraphCount').textContent = '0';
+            document.getElementById('avgSentenceLength').textContent = '0';
+            document.getElementById('readingTime').textContent = '0m';
+            document.getElementById('readabilityGrade').textContent = '0';
+            document.getElementById('keywordDensity').textContent = '0%';
+            document.getElementById('overallScore').textContent = '0';
+            
+            ['hardSentences', 'mediumSentences', 'passiveCount', 'adverbCount', 'complexCount'].forEach(id => {
+                document.getElementById(id).textContent = '0';
+            });
+            
+            ['readabilityProgress', 'wordProgress', 'densityProgress'].forEach(id => {
+                document.getElementById(id).style.width = '0%';
+            });
+        }
+
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                // Close mobile menu if open
+                if (mobileNav.classList.contains('active')) {
+                    closeMobileMenu();
+                }
+            });
+        });
+    </script>
 </body>
 </html>
